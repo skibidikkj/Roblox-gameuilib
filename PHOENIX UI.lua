@@ -1,4 +1,4 @@
--- Phoenix UI Library
+-- Phoenix UI Library - Premium Edition
 local PhoenixUI = {}
 PhoenixUI.__index = PhoenixUI
 
@@ -6,95 +6,235 @@ PhoenixUI.__index = PhoenixUI
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
 
--- Cores tema fênix (vermelho/laranja)
+-- Cores tema fênix premium
 local Colors = {
-    Main = Color3.fromRGB(20, 15, 20),
-    Secondary = Color3.fromRGB(35, 25, 35),
+    Main = Color3.fromRGB(15, 10, 15),
+    Secondary = Color3.fromRGB(30, 20, 30),
     Accent = Color3.fromRGB(255, 80, 0),
+    AccentHover = Color3.fromRGB(255, 120, 40),
     Success = Color3.fromRGB(0, 255, 100),
     Warning = Color3.fromRGB(255, 200, 0),
     Error = Color3.fromRGB(255, 50, 50),
-    Text = Color3.fromRGB(255, 255, 255)
+    Text = Color3.fromRGB(255, 255, 255),
+    TextSecondary = Color3.fromRGB(200, 200, 200),
+    Dark = Color3.fromRGB(10, 5, 10)
+}
+
+-- Gradientes premium
+local Gradients = {
+    Accent = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Colors.Accent),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 120, 40))
+    }),
+    Main = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Colors.Main),
+        ColorSequenceKeypoint.new(1, Colors.Dark)
+    })
 }
 
 -- Função para criar instâncias rapidamente
 local function Create(className, props)
     local instance = Instance.new(className)
     for prop, value in pairs(props) do
-        instance[prop] = value
+        if prop == "Children" then
+            for _, child in ipairs(value) do
+                child.Parent = instance
+            end
+        else
+            instance[prop] = value
+        end
     end
     return instance
 end
 
--- Animação suave
-local function Animate(object, props, duration)
-    local tweenInfo = TweenInfo.new(duration or 0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+-- Sistema de animação avançado
+local function Animate(object, props, duration, easingStyle, easingDirection)
+    local tweenInfo = TweenInfo.new(
+        duration or 0.3,
+        easingStyle or Enum.EasingStyle.Quint,
+        easingDirection or Enum.EasingDirection.Out
+    )
     local tween = TweenService:Create(object, tweenInfo, props)
     tween:Play()
     return tween
 end
 
--- Criar janela principal
-function PhoenixUI:CreateWindow(title)
+-- Detectar dispositivo
+local function IsMobile()
+    return UserInputService.TouchEnabled and not UserInputService.MouseEnabled
+end
+
+-- Ajustes para mobile
+local MOBILE_ADJUSTMENTS = {
+    Scale = 1.3,
+    FontSizeMultiplier = 1.2,
+    ButtonHeight = 45,
+    TabHeight = 50,
+    HeaderHeight = 60
+}
+
+-- Criar janela principal premium
+function PhoenixUI:CreateWindow(title, subtitle)
     local self = setmetatable({}, PhoenixUI)
     
     self.Elements = {}
     self.Tabs = {}
     self.CurrentTab = nil
+    self.IsMobile = IsMobile()
+    
+    -- Ajustar tamanhos para mobile
+    local scale = self.IsMobile and MOBILE_ADJUSTMENTS.Scale or 1
+    local baseWidth, baseHeight = 500, 450
+    local width, height = baseWidth * scale, baseHeight * scale
     
     -- GUI principal
     self.ScreenGui = Create("ScreenGui", {
-        Name = "PhoenixUI",
+        Name = "PhoenixUIPremium",
         ResetOnSpawn = false,
-        Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+        DisplayOrder = 10,
+        Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
     })
     
-    -- Frame principal
+    -- Background escurecido
+    self.Overlay = Create("Frame", {
+        Name = "Overlay",
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundColor3 = Color3.new(0, 0, 0),
+        BackgroundTransparency = 0.4,
+        BorderSizePixel = 0,
+        Parent = self.ScreenGui
+    })
+    
+    -- Frame principal com sombra
     self.MainFrame = Create("Frame", {
         Name = "MainFrame",
-        Size = UDim2.new(0, 500, 0, 400),
-        Position = UDim2.new(0.5, -250, 0.5, -200),
+        Size = UDim2.new(0, width, 0, height),
+        Position = UDim2.new(0.5, -width/2, 0.5, -height/2),
         BackgroundColor3 = Colors.Main,
         BorderSizePixel = 0,
         ClipsDescendants = true,
         Parent = self.ScreenGui
     })
     
-    -- Borda arredondada
-    Create("UICorner", {CornerRadius = UDim.new(0, 10), Parent = self.MainFrame})
-    
-    -- Efeito de brilho na borda
-    Create("UIStroke", {
-        Color = Colors.Accent,
-        Thickness = 2,
+    -- Efeitos visuais premium
+    Create("UIGradient", {
+        Color = Gradients.Main,
+        Rotation = 45,
         Parent = self.MainFrame
     })
     
-    -- Cabeçalho
+    Create("UICorner", {
+        CornerRadius = UDim.new(0, 16),
+        Parent = self.MainFrame
+    })
+    
+    -- Sombras
+    Create("UIStroke", {
+        Color = Colors.Accent,
+        Thickness = 2,
+        Transparency = 0.8,
+        Parent = self.MainFrame
+    })
+    
+    -- Efeito de brilho
+    local Glow = Create("ImageLabel", {
+        Name = "Glow",
+        Size = UDim2.new(1, 40, 1, 40),
+        Position = UDim2.new(0, -20, 0, -20),
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://8992230671",
+        ImageColor3 = Colors.Accent,
+        ImageTransparency = 0.8,
+        ScaleType = Enum.ScaleType.Slice,
+        SliceCenter = Rect.new(100, 100, 900, 900),
+        Parent = self.MainFrame
+    })
+    
+    -- Cabeçalho premium
+    local headerHeight = self.IsMobile and MOBILE_ADJUSTMENTS.HeaderHeight or 50
     local Header = Create("Frame", {
         Name = "Header",
-        Size = UDim2.new(1, 0, 0, 45),
+        Size = UDim2.new(1, 0, 0, headerHeight),
         BackgroundColor3 = Colors.Secondary,
         BorderSizePixel = 0,
         Parent = self.MainFrame
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 10), Parent = Header})
-    
-    -- Título
-    local Title = Create("TextLabel", {
-        Name = "Title",
-        Size = UDim2.new(0, 200, 1, 0),
-        Position = UDim2.new(0, 15, 0, 0),
-        BackgroundTransparency = 1,
-        Text = title or "Phoenix UI",
-        TextColor3 = Colors.Text,
-        TextSize = 18,
-        Font = Enum.Font.GothamBold,
-        TextXAlignment = Enum.TextXAlignment.Left,
+    Create("UICorner", {
+        CornerRadius = UDim.new(0, 16),
         Parent = Header
     })
+    
+    -- Gradiente do cabeçalho
+    Create("UIGradient", {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Colors.Secondary),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(40, 25, 40))
+        }),
+        Parent = Header
+    })
+    
+    -- Título e subtítulo
+    local TitleContainer = Create("Frame", {
+        Name = "TitleContainer",
+        Size = UDim2.new(0.7, 0, 1, 0),
+        Position = UDim2.new(0, 15, 0, 0),
+        BackgroundTransparency = 1,
+        Parent = Header
+    })
+    
+    local Title = Create("TextLabel", {
+        Name = "Title",
+        Size = UDim2.new(1, 0, 0.6, 0),
+        BackgroundTransparency = 1,
+        Text = title or "PHOENIX UI",
+        TextColor3 = Colors.Text,
+        TextSize = self.IsMobile and 20 or 18,
+        Font = Enum.Font.GothamBlack,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextYAlignment = Enum.TextYAlignment.Bottom,
+        Parent = TitleContainer
+    })
+    
+    local Subtitle = Create("TextLabel", {
+        Name = "Subtitle",
+        Size = UDim2.new(1, 0, 0.4, 0),
+        Position = UDim2.new(0, 0, 0.6, 0),
+        BackgroundTransparency = 1,
+        Text = subtitle or "Premium Edition",
+        TextColor3 = Colors.TextSecondary,
+        TextSize = self.IsMobile and 14 or 12,
+        Font = Enum.Font.Gotham,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextYAlignment = Enum.TextYAlignment.Top,
+        Parent = TitleContainer
+    })
+    
+    -- Botões de controle
+    local ControlButtons = Create("Frame", {
+        Name = "ControlButtons",
+        Size = UDim2.new(0.3, 0, 1, 0),
+        Position = UDim2.new(0.7, 0, 0, 0),
+        BackgroundTransparency = 1,
+        Parent = Header
+    })
+    
+    -- Botão minimizar
+    local MinimizeBtn = Create("TextButton", {
+        Name = "Minimize",
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.5, -35, 0.5, -15),
+        BackgroundColor3 = Colors.Warning,
+        TextColor3 = Colors.Text,
+        Text = "_",
+        TextSize = 16,
+        Font = Enum.Font.GothamBold,
+        Parent = ControlButtons
+    })
+    
+    Create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = MinimizeBtn})
     
     -- Botão fechar
     local CloseBtn = Create("TextButton", {
@@ -103,71 +243,108 @@ function PhoenixUI:CreateWindow(title)
         Position = UDim2.new(1, -35, 0.5, -15),
         BackgroundColor3 = Colors.Error,
         TextColor3 = Colors.Text,
-        Text = "X",
-        TextSize = 14,
+        Text = "×",
+        TextSize = 20,
         Font = Enum.Font.GothamBold,
-        Parent = Header
+        Parent = ControlButtons
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = CloseBtn})
+    Create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = CloseBtn})
     
-    CloseBtn.MouseButton1Click:Connect(function()
-        self:Destroy()
-    end)
-    
-    -- Efeito hover no botão fechar
-    CloseBtn.MouseEnter:Connect(function()
-        Animate(CloseBtn, {BackgroundColor3 = Color3.fromRGB(255, 100, 100)}, 0.2)
-    end)
-    
-    CloseBtn.MouseLeave:Connect(function()
-        Animate(CloseBtn, {BackgroundColor3 = Colors.Error}, 0.2)
-    end)
-    
-    -- Container de abas
+    -- Container de abas premium
     self.TabContainer = Create("Frame", {
         Name = "TabContainer",
-        Size = UDim2.new(0, 120, 1, -45),
-        Position = UDim2.new(0, 0, 0, 45),
+        Size = UDim2.new(0, 140, 1, -headerHeight),
+        Position = UDim2.new(0, 0, 0, headerHeight),
         BackgroundColor3 = Colors.Secondary,
         BorderSizePixel = 0,
         Parent = self.MainFrame
     })
     
+    Create("UICorner", {
+        CornerRadius = UDim.new(0, 16),
+        Parent = self.TabContainer
+    })
+    
     -- Container de conteúdo
     self.ContentContainer = Create("Frame", {
         Name = "Content",
-        Size = UDim2.new(1, -120, 1, -45),
-        Position = UDim2.new(0, 120, 0, 45),
+        Size = UDim2.new(1, -140, 1, -headerHeight),
+        Position = UDim2.new(0, 140, 0, headerHeight),
         BackgroundColor3 = Colors.Main,
         BorderSizePixel = 0,
         Parent = self.MainFrame
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 10), Parent = self.ContentContainer})
+    Create("UICorner", {
+        CornerRadius = UDim.new(0, 16),
+        Parent = self.ContentContainer
+    })
     
-    -- Lista de abas
+    -- Lista de abas com scroll
     self.TabList = Create("ScrollingFrame", {
         Name = "TabList",
-        Size = UDim2.new(1, 0, 1, 0),
+        Size = UDim2.new(1, -10, 1, -20),
+        Position = UDim2.new(0, 5, 0, 10),
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
         ScrollBarThickness = 3,
+        ScrollBarImageColor3 = Colors.Accent,
         CanvasSize = UDim2.new(0, 0, 0, 0),
         Parent = self.TabContainer
     })
     
     Create("UIListLayout", {
         SortOrder = Enum.SortOrder.LayoutOrder,
+        Padding = UDim.new(0, 8),
         Parent = self.TabList
     })
     
-    -- Sistema de arrastar
+    -- Funções dos botões
+    MinimizeBtn.MouseButton1Click:Connect(function()
+        self:Toggle()
+    end)
+    
+    CloseBtn.MouseButton1Click:Connect(function()
+        self:Destroy()
+    end)
+    
+    -- Efeitos hover nos botões
+    local function SetupButtonEffects(button, normalColor, hoverColor)
+        button.MouseEnter:Connect(function()
+            Animate(button, {BackgroundColor3 = hoverColor}, 0.2)
+        end)
+        
+        button.MouseLeave:Connect(function()
+            Animate(button, {BackgroundColor3 = normalColor}, 0.2)
+        end)
+        
+        button.MouseButton1Down:Connect(function()
+            Animate(button, {Size = UDim2.new(0, 28, 0, 28)}, 0.1)
+        end)
+        
+        button.MouseButton1Up:Connect(function()
+            Animate(button, {Size = UDim2.new(0, 30, 0, 30)}, 0.1)
+        end)
+    end
+    
+    SetupButtonEffects(MinimizeBtn, Colors.Warning, Color3.fromRGB(255, 220, 100))
+    SetupButtonEffects(CloseBtn, Colors.Error, Color3.fromRGB(255, 100, 100))
+    
+    -- Sistema de arrastar melhorado
     local dragging = false
     local dragInput, dragStart, startPos
     
+    local function UpdateDrag(input)
+        local delta = input.Position - dragStart
+        self.MainFrame.Position = UDim2.new(
+            startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y
+        )
+    end
+    
     Header.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
             startPos = self.MainFrame.Position
@@ -181,42 +358,104 @@ function PhoenixUI:CreateWindow(title)
     end)
     
     Header.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
+        if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             dragInput = input
         end
     end)
     
     UserInputService.InputChanged:Connect(function(input)
         if input == dragInput and dragging then
-            local delta = input.Position - dragStart
-            self.MainFrame.Position = UDim2.new(
-                startPos.X.Scale, startPos.X.Offset + delta.X,
-                startPos.Y.Scale, startPos.Y.Offset + delta.Y
-            )
+            UpdateDrag(input)
         end
     end)
+    
+    -- Suporte a gestos mobile
+    if self.IsMobile then
+        -- Pinch to resize
+        local lastPinchDistance = nil
+        
+        UserInputService.TouchPinch:Connect(function(scale, state, inputs)
+            if state == Enum.UserInputState.Begin then
+                lastPinchDistance = nil
+            elseif state == Enum.UserInputState.Change then
+                local currentSize = self.MainFrame.Size
+                local newWidth = math.clamp(currentSize.X.Offset * scale, 400, 800)
+                local newHeight = math.clamp(currentSize.Y.Offset * scale, 300, 600)
+                
+                self.MainFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
+                self.MainFrame.Position = UDim2.new(0.5, -newWidth/2, 0.5, -newHeight/2)
+            end
+        end)
+    end
     
     return self
 end
 
--- Criar nova aba
-function PhoenixUI:CreateTab(name)
+-- Criar nova aba premium
+function PhoenixUI:CreateTab(name, icon)
     local Tab = {}
     
-    -- Botão da aba
+    local tabHeight = self.IsMobile and MOBILE_ADJUSTMENTS.TabHeight or 45
+    
+    -- Botão da aba premium
     local TabButton = Create("TextButton", {
         Name = name,
-        Size = UDim2.new(1, -10, 0, 40),
-        Position = UDim2.new(0, 5, 0, 5 + (#self.Tabs * 45)),
+        Size = UDim2.new(1, -10, 0, tabHeight),
         BackgroundColor3 = Colors.Secondary,
-        Text = name,
-        TextColor3 = Colors.Text,
-        TextSize = 14,
-        Font = Enum.Font.Gotham,
+        AutoButtonColor = false,
+        Text = "",
         Parent = self.TabList
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = TabButton})
+    Create("UICorner", {CornerRadius = UDim.new(0, 10), Parent = TabButton})
+    
+    -- Container de conteúdo do botão
+    local ButtonContent = Create("Frame", {
+        Name = "Content",
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        Parent = TabButton
+    })
+    
+    -- Ícone (se fornecido)
+    if icon then
+        Create("ImageLabel", {
+            Name = "Icon",
+            Size = UDim2.new(0, 20, 0, 20),
+            Position = UDim2.new(0, 15, 0.5, -10),
+            BackgroundTransparency = 1,
+            Image = icon,
+            ImageColor3 = Colors.TextSecondary,
+            Parent = ButtonContent
+        })
+    end
+    
+    -- Texto da aba
+    local textPosition = icon and UDim2.new(0, 45, 0, 0) or UDim2.new(0, 15, 0, 0)
+    local TabText = Create("TextLabel", {
+        Name = "Text",
+        Size = UDim2.new(1, -50, 1, 0),
+        Position = textPosition,
+        BackgroundTransparency = 1,
+        Text = name,
+        TextColor3 = Colors.TextSecondary,
+        TextSize = self.IsMobile and 16 or 14,
+        Font = Enum.Font.GothamSemibold,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Parent = ButtonContent
+    })
+    
+    -- Indicador de aba ativa
+    local ActiveIndicator = Create("Frame", {
+        Name = "ActiveIndicator",
+        Size = UDim2.new(0, 4, 0.6, 0),
+        Position = UDim2.new(1, -8, 0.2, 0),
+        BackgroundColor3 = Colors.Accent,
+        Visible = false,
+        Parent = ButtonContent
+    })
+    
+    Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = ActiveIndicator})
     
     -- Frame do conteúdo da aba
     local TabFrame = Create("ScrollingFrame", {
@@ -225,6 +464,7 @@ function PhoenixUI:CreateTab(name)
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
         ScrollBarThickness = 4,
+        ScrollBarImageColor3 = Colors.Accent,
         CanvasSize = UDim2.new(0, 0, 0, 0),
         Visible = false,
         Parent = self.ContentContainer
@@ -232,26 +472,49 @@ function PhoenixUI:CreateTab(name)
     
     local UIListLayout = Create("UIListLayout", {
         SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 5),
+        Padding = UDim.new(0, 12),
         Parent = TabFrame
     })
     
     -- Atualizar tamanho do canvas
     UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        TabFrame.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+        TabFrame.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 20)
     end)
     
     -- Função para mostrar esta aba
     local function ShowTab()
         if self.CurrentTab then
-            self.CurrentTab.Button.BackgroundColor3 = Colors.Secondary
+            Animate(self.CurrentTab.Button, {BackgroundColor3 = Colors.Secondary}, 0.3)
+            Animate(self.CurrentTab.Button.Content.Text, {TextColor3 = Colors.TextSecondary}, 0.3)
+            if self.CurrentTab.Button.Content:FindFirstChild("Icon") then
+                Animate(self.CurrentTab.Button.Content.Icon, {ImageColor3 = Colors.TextSecondary}, 0.3)
+            end
+            self.CurrentTab.Button.Content.ActiveIndicator.Visible = false
             self.CurrentTab.Frame.Visible = false
         end
         
-        Animate(TabButton, {BackgroundColor3 = Colors.Accent}, 0.3)
+        Animate(TabButton, {BackgroundColor3 = Color3.fromRGB(40, 25, 40)}, 0.3)
+        Animate(TabText, {TextColor3 = Colors.Text}, 0.3)
+        if TabButton.Content:FindFirstChild("Icon") then
+            Animate(TabButton.Content.Icon, {ImageColor3 = Colors.Accent}, 0.3)
+        end
+        ActiveIndicator.Visible = true
         TabFrame.Visible = true
         self.CurrentTab = Tab
     end
+    
+    -- Efeitos do botão da aba
+    TabButton.MouseEnter:Connect(function()
+        if self.CurrentTab ~= Tab then
+            Animate(TabButton, {BackgroundColor3 = Color3.fromRGB(35, 25, 35)}, 0.2)
+        end
+    end)
+    
+    TabButton.MouseLeave:Connect(function()
+        if self.CurrentTab ~= Tab then
+            Animate(TabButton, {BackgroundColor3 = Colors.Secondary}, 0.2)
+        end
+    end)
     
     TabButton.MouseButton1Click:Connect(ShowTab)
     
@@ -269,39 +532,64 @@ function PhoenixUI:CreateTab(name)
     end
     
     -- Atualizar tamanho da lista de abas
-    self.TabList.CanvasSize = UDim2.new(0, 0, 0, #self.Tabs * 45)
+    self.TabList.CanvasSize = UDim2.new(0, 0, 0, #self.Tabs * (tabHeight + 8))
     
     return Tab
 end
 
--- Criar seção
+-- Criar seção premium
 function PhoenixUI:CreateSection(tab, name)
     local Section = {}
     
     -- Frame da seção
     local SectionFrame = Create("Frame", {
         Name = name,
-        Size = UDim2.new(1, -20, 0, 40),
+        Size = UDim2.new(1, -20, 0, 50),
         BackgroundColor3 = Colors.Secondary,
         BorderSizePixel = 0,
         LayoutOrder = #tab.Frame:GetChildren(),
         Parent = tab.Frame
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = SectionFrame})
+    Create("UICorner", {CornerRadius = UDim.new(0, 12), Parent = SectionFrame})
     
-    -- Título da seção
+    Create("UIStroke", {
+        Color = Color3.fromRGB(60, 40, 60),
+        Thickness = 1,
+        Parent = SectionFrame
+    })
+    
+    -- Cabeçalho da seção
+    local SectionHeader = Create("Frame", {
+        Name = "Header",
+        Size = UDim2.new(1, 0, 0, 50),
+        BackgroundTransparency = 1,
+        Parent = SectionFrame
+    })
+    
     local SectionTitle = Create("TextLabel", {
         Name = "Title",
-        Size = UDim2.new(1, -20, 1, 0),
-        Position = UDim2.new(0, 10, 0, 0),
+        Size = UDim2.new(1, -50, 1, 0),
+        Position = UDim2.new(0, 15, 0, 0),
         BackgroundTransparency = 1,
         Text = name,
         TextColor3 = Colors.Text,
-        TextSize = 14,
+        TextSize = self.IsMobile and 16 or 14,
         Font = Enum.Font.GothamBold,
         TextXAlignment = Enum.TextXAlignment.Left,
-        Parent = SectionFrame
+        Parent = SectionHeader
+    })
+    
+    local ExpandIcon = Create("ImageLabel", {
+        Name = "ExpandIcon",
+        Size = UDim2.new(0, 20, 0, 20),
+        Position = UDim2.new(1, -30, 0.5, -10),
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://3926305904",
+        ImageRectOffset = Vector2.new(964, 324),
+        ImageRectSize = Vector2.new(36, 36),
+        ImageColor3 = Colors.TextSecondary,
+        Parent = SectionHeader
     })
     
     -- Container de elementos
@@ -316,7 +604,7 @@ function PhoenixUI:CreateSection(tab, name)
     
     local ElementsList = Create("UIListLayout", {
         SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 5),
+        Padding = UDim.new(0, 8),
         Parent = ElementsContainer
     })
     
@@ -326,22 +614,22 @@ function PhoenixUI:CreateSection(tab, name)
     local function ToggleSection()
         Expanded = not Expanded
         if Expanded then
-            SectionFrame.Size = UDim2.new(1, -20, 0, 40 + ElementsList.AbsoluteContentSize.Y + 10)
+            SectionFrame.Size = UDim2.new(1, -20, 0, 60 + ElementsList.AbsoluteContentSize.Y + 10)
             ElementsContainer.Visible = true
-            SectionTitle.Text = "▼ " .. name
+            Animate(ExpandIcon, {Rotation = 180}, 0.3)
         else
-            SectionFrame.Size = UDim2.new(1, -20, 0, 40)
+            SectionFrame.Size = UDim2.new(1, -20, 0, 50)
             ElementsContainer.Visible = false
-            SectionTitle.Text = "► " .. name
+            Animate(ExpandIcon, {Rotation = 0}, 0.3)
         end
     end
     
-    SectionTitle.MouseButton1Click:Connect(ToggleSection)
+    SectionHeader.MouseButton1Click:Connect(ToggleSection)
     
     -- Atualizar tamanho quando elementos mudarem
     ElementsList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         if Expanded then
-            SectionFrame.Size = UDim2.new(1, -20, 0, 40 + ElementsList.AbsoluteContentSize.Y + 10)
+            SectionFrame.Size = UDim2.new(1, -20, 0, 60 + ElementsList.AbsoluteContentSize.Y + 10)
         end
     end)
     
@@ -351,53 +639,89 @@ function PhoenixUI:CreateSection(tab, name)
     return Section
 end
 
--- Criar botão
+-- Criar botão premium
 function PhoenixUI:CreateButton(section, name, callback)
+    local buttonHeight = self.IsMobile and MOBILE_ADJUSTMENTS.ButtonHeight or 40
+    
     local Button = Create("TextButton", {
         Name = name,
-        Size = UDim2.new(1, 0, 0, 35),
+        Size = UDim2.new(1, 0, 0, buttonHeight),
         BackgroundColor3 = Colors.Secondary,
         Text = name,
         TextColor3 = Colors.Text,
-        TextSize = 13,
-        Font = Enum.Font.Gotham,
+        TextSize = self.IsMobile and 16 or 14,
+        Font = Enum.Font.GothamSemibold,
         AutoButtonColor = false,
         Parent = section.Frame
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = Button})
+    Create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = Button})
     
-    -- Efeitos hover
+    Create("UIStroke", {
+        Color = Color3.fromRGB(60, 40, 60),
+        Thickness = 1,
+        Parent = Button
+    })
+    
+    -- Efeitos hover avançados
     Button.MouseEnter:Connect(function()
-        Animate(Button, {BackgroundColor3 = Colors.Accent}, 0.2)
+        Animate(Button, {BackgroundColor3 = Colors.AccentHover, Size = UDim2.new(1, 2, 0, buttonHeight)}, 0.2)
     end)
     
     Button.MouseLeave:Connect(function()
-        Animate(Button, {BackgroundColor3 = Colors.Secondary}, 0.2)
+        Animate(Button, {BackgroundColor3 = Colors.Secondary, Size = UDim2.new(1, 0, 0, buttonHeight)}, 0.2)
     end)
     
-    -- Click
-    Button.MouseButton1Click:Connect(function()
-        Animate(Button, {BackgroundColor3 = Colors.Success}, 0.1)
-        task.wait(0.1)
-        Animate(Button, {BackgroundColor3 = Colors.Secondary}, 0.2)
+    -- Efeito de click
+    Button.MouseButton1Down:Connect(function()
+        Animate(Button, {BackgroundColor3 = Colors.Accent, Size = UDim2.new(1, -2, 0, buttonHeight - 2)}, 0.1)
+    end)
+    
+    Button.MouseButton1Up:Connect(function()
+        Animate(Button, {BackgroundColor3 = Colors.AccentHover, Size = UDim2.new(1, 2, 0, buttonHeight)}, 0.1)
         
         if callback then
             callback()
         end
     end)
     
+    -- Suporte a toque mobile
+    if self.IsMobile then
+        local touchCount = 0
+        local lastTouchTime = 0
+        
+        Button.TouchTap:Connect(function()
+            local currentTime = tick()
+            if currentTime - lastTouchTime < 0.3 then
+                touchCount = touchCount + 1
+            else
+                touchCount = 1
+            end
+            lastTouchTime = currentTime
+            
+            if touchCount == 1 then
+                Animate(Button, {BackgroundColor3 = Colors.Accent}, 0.1)
+                task.wait(0.1)
+                Animate(Button, {BackgroundColor3 = Colors.AccentHover}, 0.2)
+                
+                if callback then
+                    callback()
+                end
+            end
+        end)
+    end
+    
     return Button
 end
 
--- Criar toggle
+-- Criar toggle premium
 function PhoenixUI:CreateToggle(section, name, default, callback)
     local Toggle = {}
     local State = default or false
     
     local ToggleFrame = Create("Frame", {
         Name = name,
-        Size = UDim2.new(1, 0, 0, 30),
+        Size = UDim2.new(1, 0, 0, 35),
         BackgroundTransparency = 1,
         Parent = section.Frame
     })
@@ -408,26 +732,34 @@ function PhoenixUI:CreateToggle(section, name, default, callback)
         BackgroundTransparency = 1,
         Text = name,
         TextColor3 = Colors.Text,
-        TextSize = 13,
+        TextSize = self.IsMobile and 16 or 14,
         Font = Enum.Font.Gotham,
         TextXAlignment = Enum.TextXAlignment.Left,
         Parent = ToggleFrame
     })
     
-    local ToggleButton = Create("Frame", {
+    local ToggleButton = Create("TextButton", {
         Name = "Toggle",
-        Size = UDim2.new(0, 40, 0, 20),
-        Position = UDim2.new(1, -40, 0.5, -10),
+        Size = UDim2.new(0, 50, 0, 25),
+        Position = UDim2.new(1, -50, 0.5, -12.5),
         BackgroundColor3 = Colors.Secondary,
+        AutoButtonColor = false,
+        Text = "",
         Parent = ToggleFrame
     })
     
     Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = ToggleButton})
     
+    Create("UIStroke", {
+        Color = Color3.fromRGB(60, 40, 60),
+        Thickness = 1,
+        Parent = ToggleButton
+    })
+    
     local ToggleDot = Create("Frame", {
         Name = "Dot",
-        Size = UDim2.new(0, 16, 0, 16),
-        Position = UDim2.new(0, 2, 0.5, -8),
+        Size = UDim2.new(0, 19, 0, 19),
+        Position = UDim2.new(0, 3, 0.5, -9.5),
         BackgroundColor3 = Colors.Text,
         Parent = ToggleButton
     })
@@ -437,20 +769,27 @@ function PhoenixUI:CreateToggle(section, name, default, callback)
     local function UpdateToggle()
         if State then
             Animate(ToggleButton, {BackgroundColor3 = Colors.Success}, 0.2)
-            Animate(ToggleDot, {Position = UDim2.new(1, -18, 0.5, -8)}, 0.2)
+            Animate(ToggleDot, {Position = UDim2.new(1, -22, 0.5, -9.5)}, 0.2)
         else
             Animate(ToggleButton, {BackgroundColor3 = Colors.Secondary}, 0.2)
-            Animate(ToggleDot, {Position = UDim2.new(0, 2, 0.5, -8)}, 0.2)
+            Animate(ToggleDot, {Position = UDim2.new(0, 3, 0.5, -9.5)}, 0.2)
         end
     end
     
-    ToggleButton.MouseButton1Click:Connect(function()
+    local function ToggleState()
         State = not State
         UpdateToggle()
         if callback then
             callback(State)
         end
-    end)
+    end
+    
+    ToggleButton.MouseButton1Click:Connect(ToggleState)
+    
+    -- Suporte mobile
+    if self.IsMobile then
+        ToggleButton.TouchTap:Connect(ToggleState)
+    end
     
     UpdateToggle()
     
@@ -466,25 +805,25 @@ function PhoenixUI:CreateToggle(section, name, default, callback)
     return Toggle
 end
 
--- Criar slider
+-- Criar slider premium
 function PhoenixUI:CreateSlider(section, name, min, max, default, callback)
     local Slider = {}
     local Value = default or min
     
     local SliderFrame = Create("Frame", {
         Name = name,
-        Size = UDim2.new(1, 0, 0, 50),
+        Size = UDim2.new(1, 0, 0, 60),
         BackgroundTransparency = 1,
         Parent = section.Frame
     })
     
     local SliderText = Create("TextLabel", {
         Name = "Text",
-        Size = UDim2.new(1, 0, 0, 20),
+        Size = UDim2.new(1, 0, 0, 25),
         BackgroundTransparency = 1,
         Text = name .. ": " .. Value,
         TextColor3 = Colors.Text,
-        TextSize = 13,
+        TextSize = self.IsMobile and 16 or 14,
         Font = Enum.Font.Gotham,
         TextXAlignment = Enum.TextXAlignment.Left,
         Parent = SliderFrame
@@ -492,13 +831,19 @@ function PhoenixUI:CreateSlider(section, name, min, max, default, callback)
     
     local SliderTrack = Create("Frame", {
         Name = "Track",
-        Size = UDim2.new(1, 0, 0, 6),
-        Position = UDim2.new(0, 0, 1, -15),
+        Size = UDim2.new(1, 0, 0, 8),
+        Position = UDim2.new(0, 0, 1, -25),
         BackgroundColor3 = Colors.Secondary,
         Parent = SliderFrame
     })
     
     Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = SliderTrack})
+    
+    Create("UIStroke", {
+        Color = Color3.fromRGB(60, 40, 60),
+        Thickness = 1,
+        Parent = SliderTrack
+    })
     
     local SliderFill = Create("Frame", {
         Name = "Fill",
@@ -509,16 +854,28 @@ function PhoenixUI:CreateSlider(section, name, min, max, default, callback)
     
     Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = SliderFill})
     
+    Create("UIGradient", {
+        Color = Gradients.Accent,
+        Parent = SliderFill
+    })
+    
     local SliderButton = Create("TextButton", {
         Name = "Button",
-        Size = UDim2.new(0, 16, 0, 16),
-        Position = UDim2.new((Value - min) / (max - min), -8, 0.5, -8),
+        Size = UDim2.new(0, 20, 0, 20),
+        Position = UDim2.new((Value - min) / (max - min), -10, 0.5, -10),
         BackgroundColor3 = Colors.Text,
+        AutoButtonColor = false,
         Text = "",
         Parent = SliderTrack
     })
     
     Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = SliderButton})
+    
+    Create("UIStroke", {
+        Color = Colors.Accent,
+        Thickness = 2,
+        Parent = SliderButton
+    })
     
     local function UpdateSlider(input)
         local relativeX = (input.Position.X - SliderTrack.AbsolutePosition.X) / SliderTrack.AbsoluteSize.X
@@ -528,34 +885,63 @@ function PhoenixUI:CreateSlider(section, name, min, max, default, callback)
         SliderText.Text = name .. ": " .. Value
         
         Animate(SliderFill, {Size = UDim2.new(relativeX, 0, 1, 0)}, 0.1)
-        Animate(SliderButton, {Position = UDim2.new(relativeX, -8, 0.5, -8)}, 0.1)
+        Animate(SliderButton, {Position = UDim2.new(relativeX, -10, 0.5, -10)}, 0.1)
         
         if callback then
             callback(Value)
         end
     end
     
-    SliderButton.MouseButton1Down:Connect(function()
+    local function StartSliding(input)
         local connection
-        connection = UserInputService.InputChanged:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseMovement then
+        connection = RunService.Heartbeat:Connect(function()
+            if input then
                 UpdateSlider(input)
             end
         end)
         
-        UserInputService.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                connection:Disconnect()
-            end
-        end)
+        local function EndSliding()
+            connection:Disconnect()
+        end
+        
+        if self.IsMobile then
+            UserInputService.TouchEnded:Connect(EndSliding)
+        else
+            UserInputService.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    EndSliding()
+                end
+            end)
+        end
+    end
+    
+    SliderButton.MouseButton1Down:Connect(function()
+        StartSliding(UserInputService:GetMouseLocation())
     end)
+    
+    SliderTrack.MouseButton1Down:Connect(function(input)
+        UpdateSlider(input)
+        StartSliding(UserInputService:GetMouseLocation())
+    end)
+    
+    -- Suporte mobile para slider
+    if self.IsMobile then
+        SliderButton.TouchTap:Connect(function()
+            StartSliding(UserInputService:GetMouseLocation())
+        end)
+        
+        SliderTrack.TouchTap:Connect(function(input)
+            UpdateSlider(input)
+            StartSliding(UserInputService:GetMouseLocation())
+        end)
+    end
     
     Slider.Set = function(value)
         Value = math.clamp(value, min, max)
         local relativeX = (Value - min) / (max - min)
         SliderText.Text = name .. ": " .. Value
         Animate(SliderFill, {Size = UDim2.new(relativeX, 0, 1, 0)}, 0.2)
-        Animate(SliderButton, {Position = UDim2.new(relativeX, -8, 0.5, -8)}, 0.2)
+        Animate(SliderButton, {Position = UDim2.new(relativeX, -10, 0.5, -10)}, 0.2)
     end
     
     Slider.Get = function()
@@ -565,21 +951,164 @@ function PhoenixUI:CreateSlider(section, name, min, max, default, callback)
     return Slider
 end
 
--- Criar label
-function PhoenixUI:CreateLabel(section, text)
+-- Criar label premium
+function PhoenixUI:CreateLabel(section, text, color)
     local Label = Create("TextLabel", {
         Name = "Label",
-        Size = UDim2.new(1, 0, 0, 25),
+        Size = UDim2.new(1, 0, 0, 30),
         BackgroundTransparency = 1,
         Text = text,
-        TextColor3 = Colors.Text,
-        TextSize = 13,
+        TextColor3 = color or Colors.Text,
+        TextSize = self.IsMobile and 16 or 14,
         Font = Enum.Font.Gotham,
         TextXAlignment = Enum.TextXAlignment.Left,
         Parent = section.Frame
     })
     
     return Label
+end
+
+-- Criar dropdown premium
+function PhoenixUI:CreateDropdown(section, name, options, default, callback)
+    local Dropdown = {}
+    local IsOpen = false
+    local Selected = default or options[1]
+    
+    local DropdownFrame = Create("Frame", {
+        Name = name,
+        Size = UDim2.new(1, 0, 0, 40),
+        BackgroundTransparency = 1,
+        Parent = section.Frame
+    })
+    
+    local DropdownText = Create("TextLabel", {
+        Name = "Text",
+        Size = UDim2.new(1, 0, 0, 20),
+        BackgroundTransparency = 1,
+        Text = name,
+        TextColor3 = Colors.Text,
+        TextSize = self.IsMobile and 16 or 14,
+        Font = Enum.Font.Gotham,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Parent = DropdownFrame
+    })
+    
+    local DropdownButton = Create("TextButton", {
+        Name = "Button",
+        Size = UDim2.new(1, 0, 0, 35),
+        Position = UDim2.new(0, 0, 1, -30),
+        BackgroundColor3 = Colors.Secondary,
+        Text = Selected,
+        TextColor3 = Colors.Text,
+        TextSize = self.IsMobile and 16 or 14,
+        Font = Enum.Font.Gotham,
+        AutoButtonColor = false,
+        Parent = DropdownFrame
+    })
+    
+    Create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = DropdownButton})
+    
+    local DropdownIcon = Create("ImageLabel", {
+        Name = "Icon",
+        Size = UDim2.new(0, 20, 0, 20),
+        Position = UDim2.new(1, -25, 0.5, -10),
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://3926305904",
+        ImageRectOffset = Vector2.new(964, 324),
+        ImageRectSize = Vector2.new(36, 36),
+        ImageColor3 = Colors.TextSecondary,
+        Parent = DropdownButton
+    })
+    
+    local OptionsFrame = Create("ScrollingFrame", {
+        Name = "Options",
+        Size = UDim2.new(1, 0, 0, 0),
+        Position = UDim2.new(0, 0, 1, 5),
+        BackgroundColor3 = Colors.Secondary,
+        BorderSizePixel = 0,
+        ScrollBarThickness = 4,
+        CanvasSize = UDim2.new(0, 0, 0, 0),
+        Visible = false,
+        Parent = DropdownFrame
+    })
+    
+    Create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = OptionsFrame})
+    
+    local OptionsList = Create("UIListLayout", {
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = OptionsFrame
+    })
+    
+    local function ToggleDropdown()
+        IsOpen = not IsOpen
+        if IsOpen then
+            DropdownFrame.Size = UDim2.new(1, 0, 0, 40 + math.min(#options * 35, 140) + 5)
+            OptionsFrame.Size = UDim2.new(1, 0, 0, math.min(#options * 35, 140))
+            OptionsFrame.Visible = true
+            Animate(DropdownIcon, {Rotation = 180}, 0.3)
+        else
+            DropdownFrame.Size = UDim2.new(1, 0, 0, 40)
+            OptionsFrame.Visible = false
+            Animate(DropdownIcon, {Rotation = 0}, 0.3)
+        end
+    end
+    
+    local function SelectOption(option)
+        Selected = option
+        DropdownButton.Text = option
+        ToggleDropdown()
+        if callback then
+            callback(option)
+        end
+    end
+    
+    -- Criar opções
+    for i, option in ipairs(options) do
+        local OptionButton = Create("TextButton", {
+            Name = option,
+            Size = UDim2.new(1, -10, 0, 30),
+            Position = UDim2.new(0, 5, 0, (i-1)*35),
+            BackgroundColor3 = Colors.Secondary,
+            Text = option,
+            TextColor3 = Colors.Text,
+            TextSize = self.IsMobile and 16 or 14,
+            Font = Enum.Font.Gotham,
+            AutoButtonColor = false,
+            Parent = OptionsFrame
+        })
+        
+        Create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = OptionButton})
+        
+        OptionButton.MouseButton1Click:Connect(function()
+            SelectOption(option)
+        end)
+        
+        -- Efeitos hover
+        OptionButton.MouseEnter:Connect(function()
+            Animate(OptionButton, {BackgroundColor3 = Colors.AccentHover}, 0.2)
+        end)
+        
+        OptionButton.MouseLeave:Connect(function()
+            Animate(OptionButton, {BackgroundColor3 = Colors.Secondary}, 0.2)
+        end)
+    end
+    
+    OptionsFrame.CanvasSize = UDim2.new(0, 0, 0, #options * 35)
+    
+    DropdownButton.MouseButton1Click:Connect(ToggleDropdown)
+    
+    Dropdown.Set = function(option)
+        if table.find(options, option) then
+            Selected = option
+            DropdownButton.Text = option
+        end
+    end
+    
+    Dropdown.Get = function()
+        return Selected
+    end
+    
+    return Dropdown
 end
 
 -- Destruir UI
@@ -592,7 +1121,18 @@ end
 -- Mostrar/Esconder UI
 function PhoenixUI:Toggle()
     if self.ScreenGui then
-        self.ScreenGui.Enabled = not self.ScreenGui.Enabled
+        local isEnabled = self.ScreenGui.Enabled
+        self.ScreenGui.Enabled = not isEnabled
+        
+        if not isEnabled then
+            -- Efeito de entrada
+            self.MainFrame.Size = UDim2.new(0, 0, 0, 0)
+            self.MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+            Animate(self.MainFrame, {
+                Size = UDim2.new(0, self.MainFrame.Size.X.Offset, 0, self.MainFrame.Size.Y.Offset),
+                Position = UDim2.new(0.5, -self.MainFrame.Size.X.Offset/2, 0.5, -self.MainFrame.Size.Y.Offset/2)
+            }, 0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+        end
     end
 end
 
