@@ -1,4 +1,4 @@
--- Phoenix UI - Toggle Executor System
+-- Phoenix UI Premium - Toggle Executor System
 local PhoenixUI = {}
 PhoenixUI.__index = PhoenixUI
 
@@ -7,22 +7,27 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
 
--- Cores tema fênix premium
+-- Cores tema fênix premium melhorado
 local Colors = {
-    Main = Color3.fromRGB(15, 10, 15),
-    Secondary = Color3.fromRGB(30, 20, 30),
-    Accent = Color3.fromRGB(255, 80, 0),
-    AccentHover = Color3.fromRGB(255, 120, 40),
-    Success = Color3.fromRGB(0, 255, 100),
-    Warning = Color3.fromRGB(255, 200, 0),
-    Error = Color3.fromRGB(255, 50, 50),
-    Text = Color3.fromRGB(255, 255, 255),
-    TextSecondary = Color3.fromRGB(200, 200, 200),
-    Dark = Color3.fromRGB(10, 5, 10)
+    Main = Color3.fromRGB(12, 8, 18),
+    Secondary = Color3.fromRGB(25, 18, 35),
+    Accent = Color3.fromRGB(255, 65, 0),
+    AccentHover = Color3.fromRGB(255, 100, 30),
+    Success = Color3.fromRGB(0, 230, 80),
+    Warning = Color3.fromRGB(255, 180, 0),
+    Error = Color3.fromRGB(230, 40, 40),
+    Text = Color3.fromRGB(245, 245, 245),
+    TextSecondary = Color3.fromRGB(180, 180, 180),
+    Dark = Color3.fromRGB(8, 4, 12)
 }
 
--- Função para criar instâncias rapidamente
+-- Cache de instâncias para performance
+local InstanceCache = {}
+local ActiveTweens = {}
+
+-- Função para criar instâncias rapidamente com cache
 local function Create(className, props)
     local instance = Instance.new(className)
     for prop, value in pairs(props) do
@@ -31,98 +36,115 @@ local function Create(className, props)
                 child.Parent = instance
             end
         else
-            instance[prop] = value
+            pcall(function() instance[prop] = value end)
         end
     end
     return instance
 end
 
--- Sistema de animação avançado
+-- Sistema de animação otimizado
 local function Animate(object, props, duration, easingStyle, easingDirection)
+    -- Cancelar tween anterior se existir
+    if ActiveTweens[object] then
+        ActiveTweens[object]:Cancel()
+    end
+    
     local tweenInfo = TweenInfo.new(
-        duration or 0.3,
+        duration or 0.25,
         easingStyle or Enum.EasingStyle.Quint,
         easingDirection or Enum.EasingDirection.Out
     )
     local tween = TweenService:Create(object, tweenInfo, props)
+    ActiveTweens[object] = tween
     tween:Play()
+    
+    tween.Completed:Connect(function()
+        ActiveTweens[object] = nil
+    end)
+    
     return tween
 end
 
--- Sistema de execução de scripts
+-- Sistema de execução de scripts melhorado
 local ScriptExecutor = {
     ExecutedScripts = {},
-    ActiveToggles = {}
+    ActiveToggles = {},
+    ScriptEnvironments = {}
 }
 
 function ScriptExecutor:ExecuteScript(scriptCode, toggleName)
     local success, result = pcall(function()
-        -- Verificar se é um loadstring
-        if string.sub(scriptCode, 1, 10) == "loadstring" or string.find(scriptCode, "getfenv") then
-            local loadFunc = loadstring(scriptCode)
-            if loadFunc then
-                return loadFunc()
-            else
-                error("Erro ao carregar loadstring")
+        -- Criar environment seguro
+        local env = {}
+        setmetatable(env, {
+            __index = function(_, key)
+                return getfenv()[key]
             end
-        else
-            -- Executar script Lua diretamente
-            return loadstring(scriptCode)()
+        })
+        
+        -- Executar script
+        local func, err = loadstring(scriptCode)
+        if not func then
+            error("Erro de sintaxe: " .. tostring(err))
         end
+        
+        setfenv(func, env)
+        return func()
     end)
     
     if success then
         self.ExecutedScripts[toggleName] = true
-        return true, "Script executado com sucesso!"
+        self.ScriptEnvironments[toggleName] = result
+        return true, "✅ Script executado!"
     else
         self.ExecutedScripts[toggleName] = false
-        return false, "Erro: " .. tostring(result)
+        return false, "❌ Erro: " .. tostring(result)
     end
 end
 
 function ScriptExecutor:StopScript(toggleName)
     self.ExecutedScripts[toggleName] = false
-    -- Aqui você pode adicionar lógica para parar scripts específicos
-    return true, "Script parado!"
+    self.ScriptEnvironments[toggleName] = nil
+    return true, "⏹️ Script parado!"
 end
 
--- Detectar dispositivo
+-- Detectar dispositivo e ajustes
 local function IsMobile()
-    return UserInputService.TouchEnabled and not UserInputService.MouseEnabled
+    return UserInputService.TouchEnabled
 end
 
--- Ajustes para mobile
 local MOBILE_ADJUSTMENTS = {
-    Scale = 1.3,
-    FontSizeMultiplier = 1.2,
-    ButtonHeight = 45,
-    TabHeight = 50,
-    HeaderHeight = 60
+    Scale = 1.4,
+    FontSizeMultiplier = 1.3,
+    ButtonHeight = 50,
+    TabHeight = 55,
+    HeaderHeight = 65
 }
 
--- Criar janela principal premium
-function PhoenixUI:CreateWindow(title, subtitle)
+-- Criar janela principal SUPER OTIMIZADA
+function PhoenixUI:CreateWindow(title, subtitle, config)
     local self = setmetatable({}, PhoenixUI)
     
     self.Elements = {}
     self.Tabs = {}
     self.CurrentTab = nil
     self.IsMobile = IsMobile()
+    self.Config = config or {}
     
-    -- Ajustar tamanhos para mobile
+    -- Configurações com defaults
     local scale = self.IsMobile and MOBILE_ADJUSTMENTS.Scale or 1
-    local baseWidth, baseHeight = 500, 450
-    local width, height = baseWidth * scale, baseHeight * scale
+    local width = (self.Config.width or 500) * scale
+    local height = (self.Config.height or 450) * scale
     
     -- GUI principal
     self.ScreenGui = Create("ScreenGui", {
         Name = "PhoenixUIPremium",
         ResetOnSpawn = false,
-        DisplayOrder = 10,
+        DisplayOrder = 999,
         Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
     })
     
-    -- Frame principal com sombra
+    -- Frame principal com design moderno
     self.MainFrame = Create("Frame", {
         Name = "MainFrame",
         Size = UDim2.new(0, width, 0, height),
@@ -134,21 +156,18 @@ function PhoenixUI:CreateWindow(title, subtitle)
     })
     
     -- Efeitos visuais premium
-    Create("UICorner", {
-        CornerRadius = UDim.new(0, 16),
-        Parent = self.MainFrame
-    })
+    local corner = Create("UICorner", {CornerRadius = UDim.new(0, 14)})
+    corner.Parent = self.MainFrame
     
-    -- Sombras
-    Create("UIStroke", {
+    local stroke = Create("UIStroke", {
         Color = Colors.Accent,
-        Thickness = 2,
-        Transparency = 0.8,
-        Parent = self.MainFrame
+        Thickness = 2.5,
+        Transparency = 0.3,
     })
+    stroke.Parent = self.MainFrame
     
     -- Cabeçalho premium
-    local headerHeight = self.IsMobile and MOBILE_ADJUSTMENTS.HeaderHeight or 50
+    local headerHeight = self.IsMobile and MOBILE_ADJUSTMENTS.HeaderHeight or 55
     local Header = Create("Frame", {
         Name = "Header",
         Size = UDim2.new(1, 0, 0, headerHeight),
@@ -157,16 +176,23 @@ function PhoenixUI:CreateWindow(title, subtitle)
         Parent = self.MainFrame
     })
     
-    Create("UICorner", {
-        CornerRadius = UDim.new(0, 16),
-        Parent = Header
+    Create("UICorner", {CornerRadius = UDim.new(0, 14)}).Parent = Header
+    
+    -- Gradiente sutil no header
+    local headerGradient = Create("UIGradient", {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Colors.Secondary),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(35, 25, 45))
+        }),
+        Rotation = 90
     })
+    headerGradient.Parent = Header
     
     -- Título e subtítulo
     local TitleContainer = Create("Frame", {
         Name = "TitleContainer",
         Size = UDim2.new(0.7, 0, 1, 0),
-        Position = UDim2.new(0, 15, 0, 0),
+        Position = UDim2.new(0, 20, 0, 0),
         BackgroundTransparency = 1,
         Parent = Header
     })
@@ -177,7 +203,7 @@ function PhoenixUI:CreateWindow(title, subtitle)
         BackgroundTransparency = 1,
         Text = title or "PHOENIX UI",
         TextColor3 = Colors.Text,
-        TextSize = self.IsMobile and 20 or 18,
+        TextSize = self.IsMobile and 22 or 20,
         Font = Enum.Font.GothamBlack,
         TextXAlignment = Enum.TextXAlignment.Left,
         TextYAlignment = Enum.TextYAlignment.Bottom,
@@ -189,7 +215,7 @@ function PhoenixUI:CreateWindow(title, subtitle)
         Size = UDim2.new(1, 0, 0.4, 0),
         Position = UDim2.new(0, 0, 0.6, 0),
         BackgroundTransparency = 1,
-        Text = subtitle or "Executor Edition",
+        Text = subtitle or "Premium Executor",
         TextColor3 = Colors.TextSecondary,
         TextSize = self.IsMobile and 14 or 12,
         Font = Enum.Font.Gotham,
@@ -198,11 +224,11 @@ function PhoenixUI:CreateWindow(title, subtitle)
         Parent = TitleContainer
     })
     
-    -- Botões de controle
+    -- Botões de controle (VERDE E VERMELHO)
     local ControlButtons = Create("Frame", {
         Name = "ControlButtons",
-        Size = UDim2.new(0.3, 0, 1, 0),
-        Position = UDim2.new(0.7, 0, 0, 0),
+        Size = UDim2.new(0.25, 0, 1, 0),
+        Position = UDim2.new(0.75, 0, 0, 0),
         BackgroundTransparency = 1,
         Parent = Header
     })
@@ -210,23 +236,23 @@ function PhoenixUI:CreateWindow(title, subtitle)
     -- Botão minimizar (VERDE)
     local MinimizeBtn = Create("TextButton", {
         Name = "Minimize",
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.5, -35, 0.5, -15),
+        Size = UDim2.new(0, 32, 0, 32),
+        Position = UDim2.new(0.5, -40, 0.5, -16),
         BackgroundColor3 = Colors.Success,
         TextColor3 = Colors.Text,
-        Text = "_",
-        TextSize = 16,
+        Text = "─",
+        TextSize = 18,
         Font = Enum.Font.GothamBold,
         Parent = ControlButtons
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = MinimizeBtn})
+    Create("UICorner", {CornerRadius = UDim.new(0, 8)}).Parent = MinimizeBtn
     
     -- Botão fechar (VERMELHO)
     local CloseBtn = Create("TextButton", {
         Name = "Close",
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(1, -35, 0.5, -15),
+        Size = UDim2.new(0, 32, 0, 32),
+        Position = UDim2.new(1, -37, 0.5, -16),
         BackgroundColor3 = Colors.Error,
         TextColor3 = Colors.Text,
         Text = "×",
@@ -235,56 +261,50 @@ function PhoenixUI:CreateWindow(title, subtitle)
         Parent = ControlButtons
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = CloseBtn})
+    Create("UICorner", {CornerRadius = UDim.new(0, 8)}).Parent = CloseBtn
     
-    -- Container de abas premium
+    -- Container de abas
     self.TabContainer = Create("Frame", {
         Name = "TabContainer",
-        Size = UDim2.new(0, 140, 1, -headerHeight),
+        Size = UDim2.new(0, 150, 1, -headerHeight),
         Position = UDim2.new(0, 0, 0, headerHeight),
         BackgroundColor3 = Colors.Secondary,
         BorderSizePixel = 0,
         Parent = self.MainFrame
     })
     
-    Create("UICorner", {
-        CornerRadius = UDim.new(0, 16),
-        Parent = self.TabContainer
-    })
+    Create("UICorner", {CornerRadius = UDim.new(0, 14)}).Parent = self.TabContainer
     
     -- Container de conteúdo
     self.ContentContainer = Create("Frame", {
         Name = "Content",
-        Size = UDim2.new(1, -140, 1, -headerHeight),
-        Position = UDim2.new(0, 140, 0, headerHeight),
+        Size = UDim2.new(1, -150, 1, -headerHeight),
+        Position = UDim2.new(0, 150, 0, headerHeight),
         BackgroundColor3 = Colors.Main,
         BorderSizePixel = 0,
         Parent = self.MainFrame
     })
     
-    Create("UICorner", {
-        CornerRadius = UDim.new(0, 16),
-        Parent = self.ContentContainer
-    })
+    Create("UICorner", {CornerRadius = UDim.new(0, 14)}).Parent = self.ContentContainer
     
-    -- Lista de abas com scroll
+    -- Lista de abas
     self.TabList = Create("ScrollingFrame", {
         Name = "TabList",
-        Size = UDim2.new(1, -10, 1, -20),
-        Position = UDim2.new(0, 5, 0, 10),
+        Size = UDim2.new(1, -15, 1, -20),
+        Position = UDim2.new(0, 8, 0, 10),
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        ScrollBarThickness = 3,
+        ScrollBarThickness = 4,
         ScrollBarImageColor3 = Colors.Accent,
         CanvasSize = UDim2.new(0, 0, 0, 0),
         Parent = self.TabContainer
     })
     
-    Create("UIListLayout", {
+    local tabListLayout = Create("UIListLayout", {
         SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 8),
-        Parent = self.TabList
+        Padding = UDim.new(0, 10),
     })
+    tabListLayout.Parent = self.TabList
     
     -- Funções dos botões
     MinimizeBtn.MouseButton1Click:Connect(function()
@@ -295,25 +315,26 @@ function PhoenixUI:CreateWindow(title, subtitle)
         self:Destroy()
     end)
     
-    -- Efeitos hover nos botões
+    -- Efeitos hover otimizados
     local function SetupButtonEffects(button, normalColor, hoverColor)
         button.MouseEnter:Connect(function()
-            Animate(button, {BackgroundColor3 = hoverColor}, 0.2)
+            Animate(button, {BackgroundColor3 = hoverColor, Size = UDim2.new(0, 34, 0, 34)}, 0.15)
         end)
         
         button.MouseLeave:Connect(function()
-            Animate(button, {BackgroundColor3 = normalColor}, 0.2)
+            Animate(button, {BackgroundColor3 = normalColor, Size = UDim2.new(0, 32, 0, 32)}, 0.15)
         end)
     end
     
-    SetupButtonEffects(MinimizeBtn, Colors.Success, Color3.fromRGB(100, 255, 150))
-    SetupButtonEffects(CloseBtn, Colors.Error, Color3.fromRGB(255, 100, 100))
+    SetupButtonEffects(MinimizeBtn, Colors.Success, Color3.fromRGB(80, 255, 120))
+    SetupButtonEffects(CloseBtn, Colors.Error, Color3.fromRGB(255, 80, 80))
     
-    -- Sistema de arrastar
+    -- Sistema de arrastar melhorado
     local dragging = false
-    local dragInput, dragStart, startPos
+    local dragStart, startPos
     
-    local function UpdateDrag(input)
+    local function Update(input)
+        if not dragging then return end
         local delta = input.Position - dragStart
         self.MainFrame.Position = UDim2.new(
             startPos.X.Scale, startPos.X.Offset + delta.X,
@@ -329,15 +350,9 @@ function PhoenixUI:CreateWindow(title, subtitle)
         end
     end)
     
-    Header.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            dragInput = input
-        end
-    end)
-    
     UserInputService.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            UpdateDrag(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            Update(input)
         end
     end)
     
@@ -347,16 +362,33 @@ function PhoenixUI:CreateWindow(title, subtitle)
         end
     end)
     
+    -- Atalho de teclado (F9)
+    local toggleConnection
+    toggleConnection = UserInputService.InputBegan:Connect(function(input)
+        if input.KeyCode == Enum.KeyCode.F9 then
+            self:Toggle()
+        end
+    end)
+    
+    self.Destroy = function()
+        if toggleConnection then
+            toggleConnection:Disconnect()
+        end
+        if self.ScreenGui then
+            self.ScreenGui:Destroy()
+        end
+    end
+    
     return self
 end
 
--- Criar nova aba premium
+-- Criar aba otimizada
 function PhoenixUI:CreateTab(name, icon)
     local Tab = {}
     
-    local tabHeight = self.IsMobile and MOBILE_ADJUSTMENTS.TabHeight or 45
+    local tabHeight = self.IsMobile and MOBILE_ADJUSTMENTS.TabHeight or 48
     
-    -- Botão da aba premium
+    -- Botão da aba
     local TabButton = Create("TextButton", {
         Name = name,
         Size = UDim2.new(1, -10, 0, tabHeight),
@@ -366,19 +398,16 @@ function PhoenixUI:CreateTab(name, icon)
         Parent = self.TabList
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 10), Parent = TabButton})
+    Create("UICorner", {CornerRadius = UDim.new(0, 10)}).Parent = TabButton
     
-    -- Container de conteúdo do botão
+    -- Conteúdo do botão
     local ButtonContent = Create("Frame", {
-        Name = "Content",
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
         Parent = TabButton
     })
     
-    -- Texto da aba
     local TabText = Create("TextLabel", {
-        Name = "Text",
         Size = UDim2.new(1, -20, 1, 0),
         Position = UDim2.new(0, 15, 0, 0),
         BackgroundTransparency = 1,
@@ -390,9 +419,7 @@ function PhoenixUI:CreateTab(name, icon)
         Parent = ButtonContent
     })
     
-    -- Indicador de aba ativa
     local ActiveIndicator = Create("Frame", {
-        Name = "ActiveIndicator",
         Size = UDim2.new(0, 4, 0.6, 0),
         Position = UDim2.new(1, -8, 0.2, 0),
         BackgroundColor3 = Colors.Accent,
@@ -400,15 +427,15 @@ function PhoenixUI:CreateTab(name, icon)
         Parent = ButtonContent
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = ActiveIndicator})
+    Create("UICorner", {CornerRadius = UDim.new(1, 0)}).Parent = ActiveIndicator
     
-    -- Frame do conteúdo da aba
+    -- Frame de conteúdo
     local TabFrame = Create("ScrollingFrame", {
         Name = name,
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        ScrollBarThickness = 4,
+        ScrollBarThickness = 5,
         ScrollBarImageColor3 = Colors.Accent,
         CanvasSize = UDim2.new(0, 0, 0, 0),
         Visible = false,
@@ -417,35 +444,35 @@ function PhoenixUI:CreateTab(name, icon)
     
     local UIListLayout = Create("UIListLayout", {
         SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 12),
-        Parent = TabFrame
+        Padding = UDim.new(0, 15),
     })
+    UIListLayout.Parent = TabFrame
     
-    -- Atualizar tamanho do canvas
+    -- Atualizar canvas size
     UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         TabFrame.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 20)
     end)
     
-    -- Função para mostrar esta aba
+    -- Função para mostrar aba
     local function ShowTab()
         if self.CurrentTab then
-            Animate(self.CurrentTab.Button, {BackgroundColor3 = Colors.Secondary}, 0.3)
-            Animate(self.CurrentTab.Button.Content.Text, {TextColor3 = Colors.TextSecondary}, 0.3)
-            self.CurrentTab.Button.Content.ActiveIndicator.Visible = false
+            Animate(self.CurrentTab.Button, {BackgroundColor3 = Colors.Secondary}, 0.25)
+            Animate(self.CurrentTab.Button:FindFirstChildOfClass("TextLabel"), {TextColor3 = Colors.TextSecondary}, 0.25)
+            self.CurrentTab.Button:FindFirstChild("ActiveIndicator").Visible = false
             self.CurrentTab.Frame.Visible = false
         end
         
-        Animate(TabButton, {BackgroundColor3 = Color3.fromRGB(40, 25, 40)}, 0.3)
-        Animate(TabText, {TextColor3 = Colors.Text}, 0.3)
+        Animate(TabButton, {BackgroundColor3 = Color3.fromRGB(40, 28, 50)}, 0.25)
+        Animate(TabText, {TextColor3 = Colors.Text}, 0.25)
         ActiveIndicator.Visible = true
         TabFrame.Visible = true
         self.CurrentTab = Tab
     end
     
-    -- Efeitos do botão da aba
+    -- Efeitos hover
     TabButton.MouseEnter:Connect(function()
         if self.CurrentTab ~= Tab then
-            Animate(TabButton, {BackgroundColor3 = Color3.fromRGB(35, 25, 35)}, 0.2)
+            Animate(TabButton, {BackgroundColor3 = Color3.fromRGB(35, 25, 42)}, 0.2)
         end
     end)
     
@@ -462,52 +489,48 @@ function PhoenixUI:CreateTab(name, icon)
     Tab.Frame = TabFrame
     Tab.Name = name
     
-    -- Adicionar à lista
     table.insert(self.Tabs, Tab)
     
     -- Mostrar primeira aba
     if #self.Tabs == 1 then
+        task.wait(0.1) -- Pequeno delay para animação
         ShowTab()
     end
     
-    -- Atualizar tamanho da lista de abas
-    self.TabList.CanvasSize = UDim2.new(0, 0, 0, #self.Tabs * (tabHeight + 8))
+    -- Atualizar canvas
+    self.TabList.CanvasSize = UDim2.new(0, 0, 0, #self.Tabs * (tabHeight + 10))
     
     return Tab
 end
 
--- Criar seção premium
+-- Criar seção melhorada
 function PhoenixUI:CreateSection(tab, name)
     local Section = {}
     
-    -- Frame da seção
     local SectionFrame = Create("Frame", {
         Name = name,
-        Size = UDim2.new(1, -20, 0, 50),
+        Size = UDim2.new(1, -20, 0, 55),
         BackgroundColor3 = Colors.Secondary,
         BorderSizePixel = 0,
         LayoutOrder = #tab.Frame:GetChildren(),
         Parent = tab.Frame
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 12), Parent = SectionFrame})
+    Create("UICorner", {CornerRadius = UDim.new(0, 12)}).Parent = SectionFrame
     
     Create("UIStroke", {
-        Color = Color3.fromRGB(60, 40, 60),
-        Thickness = 1,
-        Parent = SectionFrame
-    })
+        Color = Color3.fromRGB(60, 45, 75),
+        Thickness = 1.5,
+    }).Parent = SectionFrame
     
-    -- Cabeçalho da seção
+    -- Header da seção
     local SectionHeader = Create("Frame", {
-        Name = "Header",
-        Size = UDim2.new(1, 0, 0, 50),
+        Size = UDim2.new(1, 0, 0, 55),
         BackgroundTransparency = 1,
         Parent = SectionFrame
     })
     
     local SectionTitle = Create("TextLabel", {
-        Name = "Title",
         Size = UDim2.new(1, -50, 1, 0),
         Position = UDim2.new(0, 15, 0, 0),
         BackgroundTransparency = 1,
@@ -523,23 +546,23 @@ function PhoenixUI:CreateSection(tab, name)
     local ElementsContainer = Create("Frame", {
         Name = "Elements",
         Size = UDim2.new(1, -10, 0, 0),
-        Position = UDim2.new(0, 5, 1, 5),
+        Position = UDim2.new(0, 5, 1, 8),
         BackgroundTransparency = 1,
         Parent = SectionFrame
     })
     
     local ElementsList = Create("UIListLayout", {
         SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 8),
-        Parent = ElementsContainer
+        Padding = UDim.new(0, 10),
     })
+    ElementsList.Parent = ElementsContainer
     
     Section.Frame = ElementsContainer
     
     return Section
 end
 
--- TOGGLE EXECUTOR PREMIUM - AGORA COM FUNCIONALIDADE DE SCRIPTS
+-- 🎯 **TOGGLE EXECUTOR MELHORADO**
 function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description)
     local Toggle = {}
     local State = false
@@ -547,38 +570,34 @@ function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description)
     
     local ToggleFrame = Create("Frame", {
         Name = name,
-        Size = UDim2.new(1, 0, 0, 60),
+        Size = UDim2.new(1, 0, 0, 65),
         BackgroundTransparency = 1,
         Parent = section.Frame
     })
     
-    -- Container principal do toggle
+    -- Container principal
     local ToggleContainer = Create("Frame", {
-        Name = "Container",
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundColor3 = Colors.Secondary,
         Parent = ToggleFrame
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 10), Parent = ToggleContainer})
+    Create("UICorner", {CornerRadius = UDim.new(0, 10)}).Parent = ToggleContainer
     Create("UIStroke", {
-        Color = Color3.fromRGB(60, 40, 60),
+        Color = Color3.fromRGB(60, 45, 75),
         Thickness = 1,
-        Parent = ToggleContainer
-    })
+    }).Parent = ToggleContainer
     
-    -- Informações do toggle
+    -- Informações
     local InfoFrame = Create("Frame", {
-        Name = "Info",
         Size = UDim2.new(0.7, 0, 1, 0),
         BackgroundTransparency = 1,
         Parent = ToggleContainer
     })
     
     local ToggleText = Create("TextLabel", {
-        Name = "Text",
-        Size = UDim2.new(1, -10, 0, 25),
-        Position = UDim2.new(0, 10, 0, 5),
+        Size = UDim2.new(1, -15, 0, 28),
+        Position = UDim2.new(0, 12, 0, 8),
         BackgroundTransparency = 1,
         Text = name,
         TextColor3 = Colors.Text,
@@ -589,11 +608,10 @@ function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description)
     })
     
     local ToggleDesc = Create("TextLabel", {
-        Name = "Description",
-        Size = UDim2.new(1, -10, 0, 20),
-        Position = UDim2.new(0, 10, 0, 30),
+        Size = UDim2.new(1, -15, 0, 20),
+        Position = UDim2.new(0, 12, 0, 36),
         BackgroundTransparency = 1,
-        Text = description or "Clique para executar/parar",
+        Text = description or "Click to execute/stop",
         TextColor3 = Colors.TextSecondary,
         TextSize = self.IsMobile and 12 or 10,
         Font = Enum.Font.Gotham,
@@ -603,10 +621,9 @@ function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description)
     
     -- Botão toggle (VERMELHO/VERDE)
     local ToggleButton = Create("TextButton", {
-        Name = "Toggle",
-        Size = UDim2.new(0, 80, 0, 35),
-        Position = UDim2.new(1, -90, 0.5, -17.5),
-        BackgroundColor3 = Colors.Error, -- Vermelho quando desligado
+        Size = UDim2.new(0, 85, 0, 38),
+        Position = UDim2.new(1, -92, 0.5, -19),
+        BackgroundColor3 = Colors.Error, -- Vermelho quando off
         AutoButtonColor = false,
         Text = "OFF",
         TextColor3 = Colors.Text,
@@ -615,23 +632,20 @@ function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description)
         Parent = ToggleContainer
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = ToggleButton})
+    Create("UICorner", {CornerRadius = UDim.new(0, 8)}).Parent = ToggleButton
     Create("UIStroke", {
         Color = Colors.Text,
         Thickness = 2,
-        Parent = ToggleButton
-    })
+    }).Parent = ToggleButton
     
-    -- Status indicator
+    -- Indicador de status
     local StatusIndicator = Create("Frame", {
-        Name = "Status",
-        Size = UDim2.new(0, 8, 0, 8),
-        Position = UDim2.new(0, 5, 0, 5),
+        Size = UDim2.new(0, 10, 0, 10),
+        Position = UDim2.new(0, 8, 0, 8),
         BackgroundColor3 = Colors.Error,
-        Parent = ToggleContainer
     })
-    
-    Create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = StatusIndicator})
+    Create("UICorner", {CornerRadius = UDim.new(1, 0)}).Parent = StatusIndicator
+    StatusIndicator.Parent = ToggleContainer
     
     local function UpdateToggle()
         if State then
@@ -640,11 +654,10 @@ function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description)
             Animate(StatusIndicator, {BackgroundColor3 = Colors.Success}, 0.3)
             ToggleButton.Text = "ON"
             
-            -- Executar script quando ligado
+            -- Executar script
             local success, message = ScriptExecutor:ExecuteScript(scriptCode, ToggleName)
             if not success then
-                warn("Erro no toggle '" .. ToggleName .. "': " .. message)
-                -- Se der erro, desliga o toggle
+                warn("❌ Erro em '" .. ToggleName .. "': " .. message)
                 State = false
                 UpdateToggle()
             end
@@ -654,7 +667,7 @@ function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description)
             Animate(StatusIndicator, {BackgroundColor3 = Colors.Error}, 0.3)
             ToggleButton.Text = "OFF"
             
-            -- Parar script quando desligado
+            -- Parar script
             ScriptExecutor:StopScript(ToggleName)
         end
     end
@@ -666,25 +679,14 @@ function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description)
     
     -- Efeitos hover
     ToggleButton.MouseEnter:Connect(function()
-        if State then
-            Animate(ToggleButton, {BackgroundColor3 = Color3.fromRGB(100, 255, 150)}, 0.2)
-        else
-            Animate(ToggleButton, {BackgroundColor3 = Color3.fromRGB(255, 100, 100)}, 0.2)
-        end
+        Animate(ToggleButton, {Size = UDim2.new(0, 88, 0, 40)}, 0.15)
     end)
     
     ToggleButton.MouseLeave:Connect(function()
-        UpdateToggle()
+        Animate(ToggleButton, {Size = UDim2.new(0, 85, 0, 38)}, 0.15)
     end)
     
     ToggleButton.MouseButton1Click:Connect(ToggleState)
-    
-    -- Suporte mobile
-    if self.IsMobile then
-        ToggleButton.TouchTap:Connect(ToggleState)
-    end
-    
-    UpdateToggle()
     
     -- Métodos públicos
     Toggle.Set = function(value)
@@ -697,21 +699,24 @@ function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description)
     end
     
     Toggle.Execute = function()
-        State = true
-        UpdateToggle()
+        if not State then
+            ToggleState()
+        end
     end
     
     Toggle.Stop = function()
-        State = false
-        UpdateToggle()
+        if State then
+            ToggleState()
+        end
     end
     
+    UpdateToggle()
     return Toggle
 end
 
--- Criar botão de execução rápida
+-- Botão de script rápido
 function PhoenixUI:CreateScriptButton(section, name, scriptCode, description)
-    local buttonHeight = self.IsMobile and MOBILE_ADJUSTMENTS.ButtonHeight or 40
+    local buttonHeight = self.IsMobile and MOBILE_ADJUSTMENTS.ButtonHeight or 42
     
     local Button = Create("TextButton", {
         Name = name,
@@ -725,140 +730,39 @@ function PhoenixUI:CreateScriptButton(section, name, scriptCode, description)
         Parent = section.Frame
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = Button})
-    
-    Create("UIStroke", {
-        Color = Color3.fromRGB(60, 40, 60),
-        Thickness = 1,
-        Parent = Button
-    })
-    
-    -- Tooltip de descrição
-    if description then
-        Button.MouseEnter:Connect(function()
-            -- Poderia adicionar um tooltip aqui
-        end)
-    end
+    Create("UICorner", {CornerRadius = UDim.new(0, 8)}).Parent = Button
     
     -- Efeitos hover
     Button.MouseEnter:Connect(function()
-        Animate(Button, {BackgroundColor3 = Colors.AccentHover}, 0.2)
+        Animate(Button, {BackgroundColor3 = Colors.AccentHover, Size = UDim2.new(1, 4, 0, buttonHeight + 2)}, 0.2)
     end)
     
     Button.MouseLeave:Connect(function()
-        Animate(Button, {BackgroundColor3 = Colors.Accent}, 0.2)
+        Animate(Button, {BackgroundColor3 = Colors.Accent, Size = UDim2.new(1, 0, 0, buttonHeight)}, 0.2)
     end)
     
-    -- Executar script no click
+    -- Executar script
     Button.MouseButton1Click:Connect(function()
+        Animate(Button, {BackgroundColor3 = Colors.Success}, 0.1)
         local success, message = ScriptExecutor:ExecuteScript(scriptCode, name)
         if success then
-            -- Feedback visual de sucesso
-            Animate(Button, {BackgroundColor3 = Colors.Success}, 0.2)
-            task.wait(0.5)
+            task.wait(0.3)
             Animate(Button, {BackgroundColor3 = Colors.Accent}, 0.2)
         else
-            -- Feedback visual de erro
-            Animate(Button, {BackgroundColor3 = Colors.Error}, 0.2)
+            Animate(Button, {BackgroundColor3 = Colors.Error}, 0.3)
             task.wait(0.5)
             Animate(Button, {BackgroundColor3 = Colors.Accent}, 0.2)
-            warn("Erro no botão '" .. name .. "': " .. message)
         end
     end)
     
     return Button
 end
 
--- Criar área de script personalizado
-function PhoenixUI:CreateScriptBox(section, name)
-    local ScriptBox = {}
-    
-    local Container = Create("Frame", {
-        Name = name,
-        Size = UDim2.new(1, 0, 0, 150),
-        BackgroundTransparency = 1,
-        Parent = section.Frame
-    })
-    
-    local Label = Create("TextLabel", {
-        Name = "Label",
-        Size = UDim2.new(1, 0, 0, 25),
-        BackgroundTransparency = 1,
-        Text = name,
-        TextColor3 = Colors.Text,
-        TextSize = self.IsMobile and 16 or 14,
-        Font = Enum.Font.GothamBold,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        Parent = Container
-    })
-    
-    local TextBox = Create("TextBox", {
-        Name = "ScriptInput",
-        Size = UDim2.new(1, 0, 0, 100),
-        Position = UDim2.new(0, 0, 0, 30),
-        BackgroundColor3 = Colors.Secondary,
-        TextColor3 = Colors.Text,
-        Text = "-- Cole seu script aqui...",
-        TextSize = self.IsMobile and 14 or 12,
-        Font = Enum.Font.RobotoMono,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        TextYAlignment = Enum.TextYAlignment.Top,
-        TextWrapped = true,
-        ClearTextOnFocus = false,
-        MultiLine = true,
-        Parent = Container
-    })
-    
-    Create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = TextBox})
-    
-    local ExecuteButton = Create("TextButton", {
-        Name = "Execute",
-        Size = UDim2.new(1, 0, 0, 25),
-        Position = UDim2.new(0, 0, 0, 135),
-        BackgroundColor3 = Colors.Success,
-        Text = "EXECUTAR SCRIPT",
-        TextColor3 = Colors.Text,
-        TextSize = self.IsMobile and 14 or 12,
-        Font = Enum.Font.GothamBold,
-        AutoButtonColor = false,
-        Parent = Container
-    })
-    
-    Create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = ExecuteButton})
-    
-    ExecuteButton.MouseButton1Click:Connect(function()
-        local scriptCode = TextBox.Text
-        local success, message = ScriptExecutor:ExecuteScript(scriptCode, "CustomScript")
-        if success then
-            Animate(ExecuteButton, {BackgroundColor3 = Colors.Success}, 0.2)
-        else
-            Animate(ExecuteButton, {BackgroundColor3 = Colors.Error}, 0.2)
-            warn("Erro no script personalizado: " .. message)
-        end
-    end)
-    
-    ScriptBox.GetScript = function()
-        return TextBox.Text
-    end
-    
-    ScriptBox.SetScript = function(code)
-        TextBox.Text = code
-    end
-    
-    return ScriptBox
-end
-
--- Destruir UI
-function PhoenixUI:Destroy()
-    if self.ScreenGui then
-        self.ScreenGui:Destroy()
-    end
-end
-
--- Mostrar/Esconder UI
+-- Mostrar/Esconder UI com animação
 function PhoenixUI:Toggle()
     if self.ScreenGui then
-        self.ScreenGui.Enabled = not self.ScreenGui.Enabled
+        local isEnabled = self.ScreenGui.Enabled
+        self.ScreenGui.Enabled = not isEnabled
     end
 end
 
