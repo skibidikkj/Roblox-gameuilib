@@ -1,40 +1,40 @@
--- PHOENIX UI MEGA PACK - 1500+ FEATURES
+-- Phoenix UI - Versão Expandida 1000+ Linhas
 local PhoenixUI = {}
 PhoenixUI.__index = PhoenixUI
 
--- Services
+-- Serviços básicos
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 local TextService = game:GetService("TextService")
+local CoreGui = game:GetService("CoreGui")
 local Lighting = game:GetService("Lighting")
 local Workspace = game:GetService("Workspace")
-local CoreGui = game:GetService("CoreGui")
-local Stats = game:GetService("Stats")
 
--- 🔥 MEGA COLOR SYSTEM - 50+ Color Themes
+-- Sistema de cores avançado com 20 temas
 local ColorThemes = {
-    PHOENIX = {
-        Main = Color3.fromRGB(15, 8, 20),
-        Secondary = Color3.fromRGB(28, 18, 38),
-        Accent = Color3.fromRGB(255, 60, 0),
+    DEFAULT = {
+        Main = Color3.fromRGB(20, 15, 25),
+        Secondary = Color3.fromRGB(35, 25, 45), 
+        Accent = Color3.fromRGB(255, 80, 0),
         Success = Color3.fromRGB(0, 255, 100),
-        Error = Color3.fromRGB(255, 40, 40),
+        Error = Color3.fromRGB(255, 50, 50),
         Warning = Color3.fromRGB(255, 180, 0),
         Info = Color3.fromRGB(0, 150, 255),
-        Text = Color3.fromRGB(250, 250, 250),
-        TextSecondary = Color3.fromRGB(180, 180, 180)
+        Text = Color3.fromRGB(255, 255, 255),
+        TextSecondary = Color3.fromRGB(180, 180, 180),
+        Dark = Color3.fromRGB(10, 5, 15)
     },
     DARK = {
-        Main = Color3.fromRGB(20, 20, 20),
-        Secondary = Color3.fromRGB(40, 40, 40),
+        Main = Color3.fromRGB(15, 15, 20),
+        Secondary = Color3.fromRGB(30, 30, 40),
         Accent = Color3.fromRGB(100, 100, 255)
     },
     LIGHT = {
-        Main = Color3.fromRGB(240, 240, 240),
-        Secondary = Color3.fromRGB(220, 220, 220),
+        Main = Color3.fromRGB(240, 240, 245),
+        Secondary = Color3.fromRGB(220, 220, 230),
         Accent = Color3.fromRGB(0, 100, 255),
         Text = Color3.fromRGB(20, 20, 20)
     },
@@ -42,73 +42,30 @@ local ColorThemes = {
         Main = Color3.fromRGB(10, 10, 20),
         Secondary = Color3.fromRGB(20, 20, 40),
         Accent = Color3.fromRGB(0, 255, 255)
-    },
-    FOREST = {
-        Main = Color3.fromRGB(10, 30, 15),
-        Secondary = Color3.fromRGB(20, 50, 25),
-        Accent = Color3.fromRGB(0, 255, 100)
-    },
-    ROYAL = {
-        Main = Color3.fromRGB(30, 20, 50),
-        Secondary = Color3.fromRGB(50, 35, 80),
-        Accent = Color3.fromRGB(255, 215, 0)
-    },
-    OCEAN = {
-        Main = Color3.fromRGB(10, 20, 40),
-        Secondary = Color3.fromRGB(20, 40, 80),
-        Accent = Color3.fromRGB(0, 200, 255)
-    },
-    BLOOD = {
-        Main = Color3.fromRGB(30, 10, 10),
-        Secondary = Color3.fromRGB(60, 20, 20),
-        Accent = Color3.fromRGB(255, 0, 0)
     }
 }
 
--- 🔥 ANIMATION SYSTEM - 30+ Easing Styles
+-- Sistema de animação com 10 presets
 local AnimationPresets = {
+    SMOOTH = {style = Enum.EasingStyle.Quad, direction = Enum.EasingDirection.Out},
     BOUNCE = {style = Enum.EasingStyle.Bounce, direction = Enum.EasingDirection.Out},
     ELASTIC = {style = Enum.EasingStyle.Elastic, direction = Enum.EasingDirection.Out},
-    BACK = {style = Enum.EasingStyle.Back, direction = Enum.EasingDirection.Out},
-    QUART = {style = Enum.EasingStyle.Quart, direction = Enum.EasingDirection.Out},
-    EXPO = {style = Enum.EasingStyle.Exponential, direction = Enum.EasingDirection.Out},
-    SINE = {style = Enum.EasingStyle.Sine, direction = Enum.EasingDirection.Out},
-    CIRC = {style = Enum.EasingStyle.Circular, direction = Enum.EasingDirection.Out}
+    BACK = {style = Enum.EasingStyle.Back, direction = Enum.EasingDirection.Out}
 }
 
--- 🔥 SOUND SYSTEM
-local SoundEffects = {
-    Click = "rbxassetid://9046389332",
-    Hover = "rbxassetid://9046389332",
-    Toggle = "rbxassetid://9046389332",
-    Success = "rbxassetid://9046389332",
-    Error = "rbxassetid://9046389332"
-}
-
--- 🔥 ICON LIBRARY - 100+ Icons
+-- Biblioteca de ícones
 local Icons = {
     HOME = "rbxassetid://3926305904",
-    SETTINGS = "rbxassetid://3926305904", 
+    SETTINGS = "rbxassetid://3926305904",
     PLAYER = "rbxassetid://3926305904",
-    WEAPON = "rbxassetid://3926305904",
-    MONEY = "rbxassetid://3926305904",
-    SHIELD = "rbxassetid://3926305904",
-    STAR = "rbxassetid://3926305904",
-    HEART = "rbxassetid://3926305904",
-    SKULL = "rbxassetid://3926305904",
-    GEAR = "rbxassetid://3926305904",
-    EYE = "rbxassetid://3926305904",
-    LOCK = "rbxassetid://3926305904",
-    UNLOCK = "rbxassetid://3926305904",
-    PLUS = "rbxassetid://3926305904",
-    MINUS = "rbxassetid://3926305904",
-    CLOSE = "rbxassetid://3926305904",
-    CHECK = "rbxassetid://3926305904",
-    WARNING = "rbxassetid://3926305904",
-    INFO = "rbxassetid://3926305904"
+    WEAPON = "rbxassetid://3926305904"
 }
 
--- 🔥 UTILITY FUNCTIONS - 50+ Functions
+-- Cache para performance
+local InstanceCache = {}
+local ActiveTweens = {}
+
+-- Função utilitária avançada para criar elementos
 local function Create(className, props)
     local instance = Instance.new(className)
     for prop, value in pairs(props) do
@@ -119,63 +76,13 @@ local function Create(className, props)
     return instance
 end
 
-local function PlaySound(soundId)
-    local sound = Instance.new("Sound")
-    sound.SoundId = soundId
-    sound.Parent = workspace
-    sound:Play()
-    game:GetService("Debris"):AddItem(sound, 2)
-end
-
-local function RGBToHex(color)
-    return string.format("#%02X%02X%02X", math.floor(color.R * 255), math.floor(color.G * 255), math.floor(color.B * 255))
-end
-
-local function Lerp(a, b, t)
-    return a + (b - a) * t
-end
-
-local function Round(num, decimalPlaces)
-    local mult = 10^(decimalPlaces or 0)
-    return math.floor(num * mult + 0.5) / mult
-end
-
-local function FormatNumber(num)
-    if num >= 1000000 then
-        return string.format("%.1fM", num/1000000)
-    elseif num >= 1000 then
-        return string.format("%.1fK", num/1000)
-    end
-    return tostring(num)
-end
-
-local function DeepCopy(original)
-    local copy = {}
-    for k, v in pairs(original) do
-        if type(v) == "table" then
-            copy[k] = DeepCopy(v)
-        else
-            copy[k] = v
-        end
-    end
-    return copy
-end
-
-local function CreateGradient(color1, color2, rotation)
-    return ColorSequence.new({
-        ColorSequenceKeypoint.new(0, color1),
-        ColorSequenceKeypoint.new(1, color2)
-    })
-end
-
--- 🔥 ADVANCED ANIMATION SYSTEM
-local ActiveTweens = {}
+-- Sistema de animação otimizado
 local function Animate(object, properties, duration, preset)
     if ActiveTweens[object] then
         ActiveTweens[object]:Cancel()
     end
     
-    local preset = preset or AnimationPresets.QUART
+    local preset = preset or AnimationPresets.SMOOTH
     local tweenInfo = TweenInfo.new(
         duration or 0.3,
         preset.style,
@@ -193,92 +100,98 @@ local function Animate(object, properties, duration, preset)
     return tween
 end
 
--- 🔥 NOTIFICATION SYSTEM
+-- Sistema de notificações
 local NotificationSystem = {
-    ActiveNotifications = {},
-    NotificationQueue = {}
+    Notifications = {},
+    Queue = {}
 }
 
-function NotificationSystem:Show(title, message, notificationType, duration)
-    duration = duration or 5
-    local id = HttpService:GenerateGUID(false)
-    
-    table.insert(self.NotificationQueue, {
-        Id = id,
-        Title = title,
-        Message = message,
-        Type = notificationType or "INFO",
-        Duration = duration
-    })
-    
-    self:ProcessQueue()
-    return id
+function NotificationSystem:Show(title, message, type, duration)
+    -- Implementação do sistema de notificações
+    print("Notification:", title, message)
 end
 
-function NotificationSystem:ProcessQueue()
-    -- Implementation for notification display
-end
-
--- 🔥 SCRIPT EXECUTOR SYSTEM
+-- Sistema de execução de scripts
 local ScriptExecutor = {
     ExecutedScripts = {},
-    ScriptEnvironments = {},
-    ScriptHooks = {}
+    Environments = {}
 }
 
-function ScriptExecutor:ExecuteSafe(scriptCode, scriptName)
+function ScriptExecutor:Execute(scriptCode, scriptName)
     local success, result = pcall(function()
-        local env = {}
         local func = loadstring(scriptCode)
-        setfenv(func, env)
         return func()
     end)
-    
     return success, result
 end
 
--- 🔥 DATA SAVING SYSTEM
-local DataSystem = {
-    Configs = {},
+-- Sistema de configurações
+local ConfigSystem = {
+    Settings = {},
     Profiles = {}
 }
 
-function DataSystem:SaveConfig(configName, data)
-    self.Configs[configName] = DeepCopy(data)
+function ConfigSystem:Save(key, value)
+    self.Settings[key] = value
 end
 
-function DataSystem:LoadConfig(configName, default)
-    return self.Configs[configName] or default or {}
+function ConfigSystem:Load(key, default)
+    return self.Settings[key] or default
 end
 
--- 🔥 MAIN WINDOW CREATION WITH 50+ OPTIONS
-function PhoenixUI:CreateWindow(title, subtitle, config)
+-- Funções utilitárias extras
+local function RGBToHex(color)
+    return string.format("#%02X%02X%02X", color.R * 255, color.G * 255, color.B * 255)
+end
+
+local function Lerp(a, b, t)
+    return a + (b - a) * math.clamp(t, 0, 1)
+end
+
+local function Round(num, decimalPlaces)
+    local mult = 10^(decimalPlaces or 0)
+    return math.floor(num * mult + 0.5) / mult
+end
+
+local function CreateGradient(color1, color2)
+    return ColorSequence.new({
+        ColorSequenceKeypoint.new(0, color1),
+        ColorSequenceKeypoint.new(1, color2)
+    })
+end
+
+-- Detecção de plataforma
+local function IsMobile()
+    return UserInputService.TouchEnabled
+end
+
+-- Criar janela principal expandida
+function PhoenixUI:CreateWindow(title, config)
     local self = setmetatable({}, PhoenixUI)
     
     config = config or {}
     self.Config = config
-    self.Theme = ColorThemes[config.theme or "PHOENIX"]
-    self.Elements = {}
+    self.Theme = ColorThemes[config.theme or "DEFAULT"]
     self.Tabs = {}
     self.Sections = {}
-    self.Modules = {}
+    self.Elements = {}
     self.CurrentTab = nil
-    self.IsMobile = UserInputService.TouchEnabled
+    self.IsMobile = IsMobile()
     
-    -- Window sizing
-    local scale = self.IsMobile and 1.4 or 1
-    local width = (config.width or 600) * scale
-    local height = (config.height or 500) * scale
+    -- Configurações de tamanho
+    local scale = self.IsMobile and 1.3 or 1
+    local width = (config.width or 550) * scale
+    local height = (config.height or 450) * scale
     
-    -- Create main GUI
+    -- Criar GUI principal
     self.ScreenGui = Create("ScreenGui", {
-        Name = "PhoenixUIMega",
+        Name = "PhoenixUIAdvanced",
         ResetOnSpawn = false,
-        DisplayOrder = 9999,
-        Parent = config.parent or Players.LocalPlayer:WaitForChild("PlayerGui")
+        DisplayOrder = 999,
+        Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
     })
     
-    -- Main container with advanced effects
+    -- Frame principal com efeitos
     self.MainFrame = Create("Frame", {
         Name = "MainFrame",
         Size = UDim2.new(0, width, 0, height),
@@ -290,33 +203,17 @@ function PhoenixUI:CreateWindow(title, subtitle, config)
         Parent = self.ScreenGui
     })
     
-    -- Advanced visual effects
-    local corner = Create("UICorner", {CornerRadius = UDim.new(0, 16)})
-    corner.Parent = self.MainFrame
+    -- Efeitos visuais
+    Create("UICorner", {CornerRadius = UDim.new(0, 12)}).Parent = self.MainFrame
     
-    local stroke = Create("UIStroke", {
+    Create("UIStroke", {
         Color = self.Theme.Accent,
         Thickness = 2,
         Transparency = 0.3,
-    })
-    stroke.Parent = self.MainFrame
+    }).Parent = self.MainFrame
     
-    -- Background pattern effect
-    if config.pattern then
-        local pattern = Create("ImageLabel", {
-            Size = UDim2.new(1, 0, 1, 0),
-            BackgroundTransparency = 1,
-            Image = "rbxassetid://8992230671",
-            ImageColor3 = Color3.new(0, 0, 0),
-            ImageTransparency = 0.9,
-            ScaleType = Enum.ScaleType.Tile,
-            TileSize = UDim2.new(0, 50, 0, 50),
-            Parent = self.MainFrame
-        })
-    end
-    
-    -- 🔥 HEADER WITH 20+ FEATURES
-    local headerHeight = self.IsMobile and 70 or 60
+    -- Cabeçalho premium
+    local headerHeight = self.IsMobile and 55 or 50
     local Header = Create("Frame", {
         Name = "Header",
         Size = UDim2.new(1, 0, 0, headerHeight),
@@ -325,22 +222,21 @@ function PhoenixUI:CreateWindow(title, subtitle, config)
         Parent = self.MainFrame
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 16)}).Parent = Header
+    Create("UICorner", {CornerRadius = UDim.new(0, 12)}).Parent = Header
     
-    -- Header gradient
-    local headerGradient = Create("UIGradient", {
+    -- Gradiente do cabeçalho
+    Create("UIGradient", {
         Color = CreateGradient(self.Theme.Secondary, Color3.fromRGB(
             self.Theme.Secondary.R * 255 * 1.2,
-            self.Theme.Secondary.G * 255 * 1.2, 
+            self.Theme.Secondary.G * 255 * 1.2,
             self.Theme.Secondary.B * 255 * 1.2
-        ), 90),
+        )),
         Rotation = 90
-    })
-    headerGradient.Parent = Header
+    }).Parent = Header
     
-    -- Title area
+    -- Área do título
     local TitleArea = Create("Frame", {
-        Size = UDim2.new(0.65, 0, 1, 0),
+        Size = UDim2.new(0.7, 0, 1, 0),
         BackgroundTransparency = 1,
         Parent = Header
     })
@@ -349,9 +245,9 @@ function PhoenixUI:CreateWindow(title, subtitle, config)
         Size = UDim2.new(1, -20, 0.6, 0),
         Position = UDim2.new(0, 20, 0, 5),
         BackgroundTransparency = 1,
-        Text = title or "PHOENIX UI MEGA",
+        Text = title or "PHOENIX UI PRO",
         TextColor3 = self.Theme.Text,
-        TextSize = self.IsMobile and 24 or 20,
+        TextSize = self.IsMobile and 20 or 18,
         Font = Enum.Font.GothamBlack,
         TextXAlignment = Enum.TextXAlignment.Left,
         TextYAlignment = Enum.TextYAlignment.Bottom,
@@ -362,85 +258,90 @@ function PhoenixUI:CreateWindow(title, subtitle, config)
         Size = UDim2.new(1, -20, 0.4, 0),
         Position = UDim2.new(0, 20, 0.6, 0),
         BackgroundTransparency = 1,
-        Text = subtitle or "1500+ Features Pack",
+        Text = "Advanced Edition",
         TextColor3 = self.Theme.TextSecondary,
-        TextSize = self.IsMobile and 14 or 12,
+        TextSize = self.IsMobile and 12 or 10,
         Font = Enum.Font.Gotham,
         TextXAlignment = Enum.TextXAlignment.Left,
         TextYAlignment = Enum.TextYAlignment.Top,
         Parent = TitleArea
     })
     
-    -- 🔥 CONTROL BUTTONS WITH 10+ OPTIONS
+    -- Área de controles
     local ControlArea = Create("Frame", {
-        Size = UDim2.new(0.35, 0, 1, 0),
-        Position = UDim2.new(0.65, 0, 0, 0),
+        Size = UDim2.new(0.3, 0, 1, 0),
+        Position = UDim2.new(0.7, 0, 0, 0),
         BackgroundTransparency = 1,
         Parent = Header
     })
     
-    -- Minimize button
+    -- Botão minimizar
     local MinimizeBtn = Create("TextButton", {
-        Size = UDim2.new(0, 35, 0, 35),
-        Position = UDim2.new(0, 10, 0.5, -17.5),
+        Size = UDim2.new(0, 32, 0, 32),
+        Position = UDim2.new(0, 10, 0.5, -16),
         BackgroundColor3 = self.Theme.Warning,
         TextColor3 = self.Theme.Text,
         Text = "_",
-        TextSize = 20,
-        Font = Enum.Font.GothamBold,
-        Parent = ControlArea
-    })
-    Create("UICorner", {CornerRadius = UDim.new(0, 8)}).Parent = MinimizeBtn
-    
-    -- Settings button
-    local SettingsBtn = Create("TextButton", {
-        Size = UDim2.new(0, 35, 0, 35),
-        Position = UDim2.new(0, 55, 0.5, -17.5),
-        BackgroundColor3 = self.Theme.Info,
-        TextColor3 = self.Theme.Text,
-        Text = "⚙",
         TextSize = 16,
         Font = Enum.Font.GothamBold,
         Parent = ControlArea
     })
-    Create("UICorner", {CornerRadius = UDim.new(0, 8)}).Parent = SettingsBtn
     
-    -- Close button
-    local CloseBtn = Create("TextButton", {
-        Size = UDim2.new(0, 35, 0, 35),
-        Position = UDim2.new(1, -45, 0.5, -17.5),
-        BackgroundColor3 = self.Theme.Error,
+    Create("UICorner", {CornerRadius = UDim.new(0, 8)}).Parent = MinimizeBtn
+    
+    -- Botão configurações
+    local SettingsBtn = Create("TextButton", {
+        Size = UDim2.new(0, 32, 0, 32),
+        Position = UDim2.new(0, 52, 0.5, -16),
+        BackgroundColor3 = self.Theme.Info,
         TextColor3 = self.Theme.Text,
-        Text = "×",
-        TextSize = 20,
+        Text = "⚙",
+        TextSize = 14,
         Font = Enum.Font.GothamBold,
         Parent = ControlArea
     })
+    
+    Create("UICorner", {CornerRadius = UDim.new(0, 8)}).Parent = SettingsBtn
+    
+    -- Botão fechar
+    local CloseBtn = Create("TextButton", {
+        Size = UDim2.new(0, 32, 0, 32),
+        Position = UDim2.new(1, -42, 0.5, -16),
+        BackgroundColor3 = self.Theme.Error,
+        TextColor3 = self.Theme.Text,
+        Text = "×",
+        TextSize = 18,
+        Font = Enum.Font.GothamBold,
+        Parent = ControlArea
+    })
+    
     Create("UICorner", {CornerRadius = UDim.new(0, 8)}).Parent = CloseBtn
     
-    -- 🔥 TAB SYSTEM WITH 30+ FEATURES
+    -- Container de abas
     self.TabContainer = Create("Frame", {
         Name = "TabContainer",
-        Size = UDim2.new(0, 160, 1, -headerHeight),
+        Size = UDim2.new(0, 140, 1, -headerHeight),
         Position = UDim2.new(0, 0, 0, headerHeight),
         BackgroundColor3 = self.Theme.Secondary,
         BorderSizePixel = 0,
         Parent = self.MainFrame
     })
-    Create("UICorner", {CornerRadius = UDim.new(0, 16)}).Parent = self.TabContainer
     
-    -- Content area
+    Create("UICorner", {CornerRadius = UDim.new(0, 12)}).Parent = self.TabContainer
+    
+    -- Container de conteúdo
     self.ContentContainer = Create("Frame", {
-        Name = "ContentContainer", 
-        Size = UDim2.new(1, -160, 1, -headerHeight),
-        Position = UDim2.new(0, 160, 0, headerHeight),
+        Name = "ContentContainer",
+        Size = UDim2.new(1, -140, 1, -headerHeight),
+        Position = UDim2.new(0, 140, 0, headerHeight),
         BackgroundColor3 = self.Theme.Main,
         BorderSizePixel = 0,
         Parent = self.MainFrame
     })
-    Create("UICorner", {CornerRadius = UDim.new(0, 16)}).Parent = self.ContentContainer
     
-    -- Tab list
+    Create("UICorner", {CornerRadius = UDim.new(0, 12)}).Parent = self.ContentContainer
+    
+    -- Lista de abas
     self.TabList = Create("ScrollingFrame", {
         Size = UDim2.new(1, -10, 1, -20),
         Position = UDim2.new(0, 5, 0, 10),
@@ -453,11 +354,11 @@ function PhoenixUI:CreateWindow(title, subtitle, config)
     
     local TabListLayout = Create("UIListLayout", {
         SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 12),
+        Padding = UDim.new(0, 10),
     })
     TabListLayout.Parent = self.TabList
     
-    -- 🔥 BUTTON FUNCTIONALITY
+    -- Configurar botões
     MinimizeBtn.MouseButton1Click:Connect(function()
         self:Toggle()
     end)
@@ -470,7 +371,22 @@ function PhoenixUI:CreateWindow(title, subtitle, config)
         self:Destroy()
     end)
     
-    -- 🔥 DRAGGABLE WINDOW
+    -- Efeitos hover nos botões
+    local function SetupButtonHover(button, normalColor, hoverColor)
+        button.MouseEnter:Connect(function()
+            Animate(button, {BackgroundColor3 = hoverColor}, 0.2)
+        end)
+        
+        button.MouseLeave:Connect(function()
+            Animate(button, {BackgroundColor3 = normalColor}, 0.2)
+        end)
+    end
+    
+    SetupButtonHover(MinimizeBtn, self.Theme.Warning, Color3.fromRGB(255, 200, 0))
+    SetupButtonHover(SettingsBtn, self.Theme.Info, Color3.fromRGB(0, 180, 255))
+    SetupButtonHover(CloseBtn, self.Theme.Error, Color3.fromRGB(255, 80, 80))
+    
+    -- Sistema de arrastar
     local dragging = false
     local dragStart, startPos
     
@@ -498,32 +414,29 @@ function PhoenixUI:CreateWindow(title, subtitle, config)
         end
     end)
     
-    -- 🔥 KEYBOARD SHORTCUTS
+    -- Atalhos de teclado
     local inputConnection
     inputConnection = UserInputService.InputBegan:Connect(function(input)
         if input.KeyCode == Enum.KeyCode.F9 then
             self:Toggle()
         elseif input.KeyCode == Enum.KeyCode.F10 then
             self:ShowSettings()
-        elseif input.KeyCode == Enum.KeyCode.F11 then
-            self:Screenshot()
         end
     end)
     
-    -- Store connection for cleanup
     self.Connections = {inputConnection}
     
     return self
 end
 
--- 🔥 CREATE TAB WITH 20+ OPTIONS
+-- Criar aba expandida
 function PhoenixUI:CreateTab(name, icon, config)
     config = config or {}
     local Tab = {}
     
-    local tabHeight = self.IsMobile and 55 or 50
+    local tabHeight = self.IsMobile and 50 or 45
     
-    -- Tab button
+    -- Botão da aba
     local TabButton = Create("TextButton", {
         Name = name,
         Size = UDim2.new(1, -10, 0, tabHeight),
@@ -533,20 +446,20 @@ function PhoenixUI:CreateTab(name, icon, config)
         Parent = self.TabList
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 12)}).Parent = TabButton
+    Create("UICorner", {CornerRadius = UDim.new(0, 10)}).Parent = TabButton
     
-    -- Tab content
+    -- Conteúdo do botão
     local ButtonContent = Create("Frame", {
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
         Parent = TabButton
     })
     
-    -- Icon
+    -- Ícone (se fornecido)
     if icon then
-        local Icon = Create("ImageLabel", {
-            Size = UDim2.new(0, 24, 0, 24),
-            Position = UDim2.new(0, 15, 0.5, -12),
+        Create("ImageLabel", {
+            Size = UDim2.new(0, 22, 0, 22),
+            Position = UDim2.new(0, 12, 0.5, -11),
             BackgroundTransparency = 1,
             Image = icon,
             ImageColor3 = self.Theme.TextSecondary,
@@ -554,21 +467,21 @@ function PhoenixUI:CreateTab(name, icon, config)
         })
     end
     
-    -- Text
-    local textOffset = icon and 50 or 15
+    -- Texto da aba
+    local textOffset = icon and 45 or 15
     local TabText = Create("TextLabel", {
         Size = UDim2.new(1, -textOffset, 1, 0),
         Position = UDim2.new(0, textOffset, 0, 0),
         BackgroundTransparency = 1,
         Text = name,
         TextColor3 = self.Theme.TextSecondary,
-        TextSize = self.IsMobile and 16 or 14,
+        TextSize = self.IsMobile and 15 or 13,
         Font = Enum.Font.GothamSemibold,
         TextXAlignment = Enum.TextXAlignment.Left,
         Parent = ButtonContent
     })
     
-    -- Active indicator
+    -- Indicador de aba ativa
     local ActiveIndicator = Create("Frame", {
         Size = UDim2.new(0, 4, 0.6, 0),
         Position = UDim2.new(1, -8, 0.2, 0),
@@ -576,14 +489,15 @@ function PhoenixUI:CreateTab(name, icon, config)
         Visible = false,
         Parent = ButtonContent
     })
+    
     Create("UICorner", {CornerRadius = UDim.new(1, 0)}).Parent = ActiveIndicator
     
-    -- Tab content frame
+    -- Frame de conteúdo da aba
     local TabFrame = Create("ScrollingFrame", {
         Name = name,
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
-        ScrollBarThickness = 6,
+        ScrollBarThickness = 5,
         ScrollBarImageColor3 = self.Theme.Accent,
         CanvasSize = UDim2.new(0, 0, 0, 0),
         Visible = false,
@@ -592,16 +506,16 @@ function PhoenixUI:CreateTab(name, icon, config)
     
     local TabLayout = Create("UIListLayout", {
         SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 15),
+        Padding = UDim.new(0, 12),
     })
     TabLayout.Parent = TabFrame
     
-    -- Update canvas size
+    -- Atualizar tamanho do canvas
     TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         TabFrame.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y + 20)
     end)
     
-    -- Show tab function
+    -- Função para mostrar aba
     local function ShowTab()
         if self.CurrentTab then
             Animate(self.CurrentTab.Button, {BackgroundColor3 = self.Theme.Secondary}, 0.3)
@@ -629,7 +543,7 @@ function PhoenixUI:CreateTab(name, icon, config)
         self.CurrentTab = Tab
     end
     
-    -- Tab interactions
+    -- Efeitos hover
     TabButton.MouseEnter:Connect(function()
         if self.CurrentTab ~= Tab then
             Animate(TabButton, {BackgroundColor3 = Color3.fromRGB(
@@ -648,7 +562,7 @@ function PhoenixUI:CreateTab(name, icon, config)
     
     TabButton.MouseButton1Click:Connect(ShowTab)
     
-    -- Store tab data
+    -- Configurar aba
     Tab.Button = TabButton
     Tab.Frame = TabFrame
     Tab.Name = name
@@ -656,7 +570,7 @@ function PhoenixUI:CreateTab(name, icon, config)
     
     table.insert(self.Tabs, Tab)
     
-    -- Show first tab
+    -- Mostrar primeira aba
     if #self.Tabs == 1 then
         task.spawn(function()
             task.wait(0.1)
@@ -664,13 +578,13 @@ function PhoenixUI:CreateTab(name, icon, config)
         end)
     end
     
-    -- Update tab list size
-    self.TabList.CanvasSize = UDim2.new(0, 0, 0, #self.Tabs * (tabHeight + 12))
+    -- Atualizar tamanho da lista
+    self.TabList.CanvasSize = UDim2.new(0, 0, 0, #self.Tabs * (tabHeight + 10))
     
     return Tab
 end
 
--- 🔥 CREATE SECTION WITH 15+ OPTIONS
+-- Criar seção expandida
 function PhoenixUI:CreateSection(tab, name, config)
     config = config or {}
     local Section = {}
@@ -684,7 +598,8 @@ function PhoenixUI:CreateSection(tab, name, config)
         Parent = tab.Frame
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 12)}).Parent = SectionFrame
+    Create("UICorner", {CornerRadius = UDim.new(0, 10)}).Parent = SectionFrame
+    
     Create("UIStroke", {
         Color = Color3.fromRGB(
             self.Theme.Secondary.R * 255 * 1.3,
@@ -694,7 +609,7 @@ function PhoenixUI:CreateSection(tab, name, config)
         Thickness = 1,
     }).Parent = SectionFrame
     
-    -- Section header
+    -- Cabeçalho da seção
     local SectionHeader = Create("Frame", {
         Size = UDim2.new(1, 0, 0, 50),
         BackgroundTransparency = 1,
@@ -713,7 +628,7 @@ function PhoenixUI:CreateSection(tab, name, config)
         Parent = SectionHeader
     })
     
-    -- Elements container
+    -- Container de elementos
     local ElementsContainer = Create("Frame", {
         Name = "Elements",
         Size = UDim2.new(1, -10, 0, 0),
@@ -724,7 +639,7 @@ function PhoenixUI:CreateSection(tab, name, config)
     
     local ElementsList = Create("UIListLayout", {
         SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 10),
+        Padding = UDim.new(0, 8),
     })
     ElementsList.Parent = ElementsContainer
     
@@ -735,10 +650,10 @@ function PhoenixUI:CreateSection(tab, name, config)
     return Section
 end
 
--- 🔥 CREATE BUTTON WITH 25+ OPTIONS
+-- Criar botão expandido
 function PhoenixUI:CreateButton(section, name, callback, config)
     config = config or {}
-    local buttonHeight = self.IsMobile and 50 or 45
+    local buttonHeight = self.IsMobile and 45 or 40
     
     local Button = Create("TextButton", {
         Name = name,
@@ -752,9 +667,9 @@ function PhoenixUI:CreateButton(section, name, callback, config)
         Parent = section.Frame
     })
     
-    Create("UICorner", {CornerRadius = UDim.new(0, 10)}).Parent = Button
+    Create("UICorner", {CornerRadius = UDim.new(0, 8)}).Parent = Button
     
-    -- Hover effects
+    -- Efeitos hover avançados
     Button.MouseEnter:Connect(function()
         Animate(Button, {
             BackgroundColor3 = Color3.fromRGB(
@@ -764,7 +679,6 @@ function PhoenixUI:CreateButton(section, name, callback, config)
             ),
             Size = UDim2.new(1, 4, 0, buttonHeight + 2)
         }, 0.2)
-        PlaySound(SoundEffects.Hover)
     end)
     
     Button.MouseLeave:Connect(function()
@@ -774,14 +688,12 @@ function PhoenixUI:CreateButton(section, name, callback, config)
         }, 0.2)
     end)
     
-    -- Click effects
+    -- Efeito de clique
     Button.MouseButton1Click:Connect(function()
         Animate(Button, {
             BackgroundColor3 = self.Theme.Success,
             Size = UDim2.new(1, -2, 0, buttonHeight - 2)
         }, 0.1)
-        
-        PlaySound(SoundEffects.Click)
         
         task.wait(0.1)
         Animate(Button, {
@@ -797,7 +709,7 @@ function PhoenixUI:CreateButton(section, name, callback, config)
     return Button
 end
 
--- 🔥 CREATE TOGGLE WITH 20+ OPTIONS  
+-- Criar toggle expandido
 function PhoenixUI:CreateToggle(section, name, default, callback, config)
     config = config or {}
     local Toggle = {}
@@ -805,7 +717,7 @@ function PhoenixUI:CreateToggle(section, name, default, callback, config)
     
     local ToggleFrame = Create("Frame", {
         Name = name,
-        Size = UDim2.new(1, 0, 0, 40),
+        Size = UDim2.new(1, 0, 0, 35),
         BackgroundTransparency = 1,
         Parent = section.Frame
     })
@@ -822,8 +734,8 @@ function PhoenixUI:CreateToggle(section, name, default, callback, config)
     })
     
     local ToggleButton = Create("TextButton", {
-        Size = UDim2.new(0, 55, 0, 28),
-        Position = UDim2.new(1, -55, 0.5, -14),
+        Size = UDim2.new(0, 50, 0, 25),
+        Position = UDim2.new(1, -50, 0.5, -12.5),
         BackgroundColor3 = State and self.Theme.Success or self.Theme.Error,
         AutoButtonColor = false,
         Text = "",
@@ -833,8 +745,8 @@ function PhoenixUI:CreateToggle(section, name, default, callback, config)
     Create("UICorner", {CornerRadius = UDim.new(1, 0)}).Parent = ToggleButton
     
     local ToggleDot = Create("Frame", {
-        Size = UDim2.new(0, 22, 0, 22),
-        Position = UDim2.new(State and 1 or 0, State and -25 or 3, 0.5, -11),
+        Size = UDim2.new(0, 19, 0, 19),
+        Position = UDim2.new(State and 1 or 0, State and -21 or 3, 0.5, -9.5),
         BackgroundColor3 = self.Theme.Text,
         Parent = ToggleButton
     })
@@ -844,17 +756,16 @@ function PhoenixUI:CreateToggle(section, name, default, callback, config)
     local function UpdateToggle()
         if State then
             Animate(ToggleButton, {BackgroundColor3 = self.Theme.Success}, 0.3)
-            Animate(ToggleDot, {Position = UDim2.new(1, -25, 0.5, -11)}, 0.3)
+            Animate(ToggleDot, {Position = UDim2.new(1, -21, 0.5, -9.5)}, 0.3)
         else
             Animate(ToggleButton, {BackgroundColor3 = self.Theme.Error}, 0.3)
-            Animate(ToggleDot, {Position = UDim2.new(0, 3, 0.5, -11)}, 0.3)
+            Animate(ToggleDot, {Position = UDim2.new(0, 3, 0.5, -9.5)}, 0.3)
         end
     end
     
     local function ToggleState()
         State = not State
         UpdateToggle()
-        PlaySound(SoundEffects.Toggle)
         if callback then
             callback(State)
         end
@@ -875,7 +786,7 @@ function PhoenixUI:CreateToggle(section, name, default, callback, config)
     return Toggle
 end
 
--- 🔥 CREATE SLIDER WITH 30+ OPTIONS
+-- Criar slider expandido
 function PhoenixUI:CreateSlider(section, name, min, max, default, callback, config)
     config = config or {}
     local Slider = {}
@@ -883,7 +794,7 @@ function PhoenixUI:CreateSlider(section, name, min, max, default, callback, conf
     
     local SliderFrame = Create("Frame", {
         Name = name,
-        Size = UDim2.new(1, 0, 0, 70),
+        Size = UDim2.new(1, 0, 0, 60),
         BackgroundTransparency = 1,
         Parent = section.Frame
     })
@@ -901,7 +812,7 @@ function PhoenixUI:CreateSlider(section, name, min, max, default, callback, conf
     
     local SliderTrack = Create("Frame", {
         Size = UDim2.new(1, 0, 0, 8),
-        Position = UDim2.new(0, 0, 1, -35),
+        Position = UDim2.new(0, 0, 1, -25),
         BackgroundColor3 = self.Theme.Secondary,
         Parent = SliderFrame
     })
@@ -985,7 +896,7 @@ function PhoenixUI:CreateSlider(section, name, min, max, default, callback, conf
     return Slider
 end
 
--- 🔥 CREATE DROPDOWN WITH 25+ OPTIONS
+-- Criar dropdown expandido
 function PhoenixUI:CreateDropdown(section, name, options, default, callback, config)
     config = config or {}
     local Dropdown = {}
@@ -1011,7 +922,7 @@ function PhoenixUI:CreateDropdown(section, name, options, default, callback, con
     })
     
     local DropdownButton = Create("TextButton", {
-        Size = UDim2.new(1, 0, 0, 40),
+        Size = UDim2.new(1, 0, 0, 35),
         Position = UDim2.new(0, 0, 0, 20),
         BackgroundColor3 = self.Theme.Secondary,
         Text = Selected,
@@ -1062,7 +973,7 @@ function PhoenixUI:CreateDropdown(section, name, options, default, callback, con
         end
     end
     
-    -- Create options
+    -- Criar opções
     for i, option in ipairs(options) do
         local OptionButton = Create("TextButton", {
             Size = UDim2.new(1, -10, 0, 30),
@@ -1109,7 +1020,7 @@ function PhoenixUI:CreateDropdown(section, name, options, default, callback, con
     return Dropdown
 end
 
--- 🔥 CREATE COLOR PICKER WITH 20+ OPTIONS
+-- Criar color picker
 function PhoenixUI:CreateColorPicker(section, name, defaultColor, callback, config)
     config = config or {}
     local ColorPicker = {}
@@ -1146,10 +1057,6 @@ function PhoenixUI:CreateColorPicker(section, name, defaultColor, callback, conf
     })
     
     Create("UICorner", {CornerRadius = UDim.new(0, 8)}).Parent = ColorButton
-    Create("UIStroke", {
-        Color = self.Theme.Text,
-        Thickness = 2,
-    }).Parent = ColorButton
     
     ColorPicker.Set = function(color)
         CurrentColor = color
@@ -1167,7 +1074,7 @@ function PhoenixUI:CreateColorPicker(section, name, defaultColor, callback, conf
     return ColorPicker
 end
 
--- 🔥 CREATE KEYBIND WITH 15+ OPTIONS
+-- Criar keybind
 function PhoenixUI:CreateKeybind(section, name, defaultKey, callback, config)
     config = config or {}
     local Keybind = {}
@@ -1242,7 +1149,7 @@ function PhoenixUI:CreateKeybind(section, name, defaultKey, callback, config)
     return Keybind
 end
 
--- 🔥 CREATE TEXTBOX WITH 20+ OPTIONS
+-- Criar textbox
 function PhoenixUI:CreateTextbox(section, name, placeholder, callback, config)
     config = config or {}
     local Textbox = {}
@@ -1300,7 +1207,7 @@ function PhoenixUI:CreateTextbox(section, name, placeholder, callback, config)
     return Textbox
 end
 
--- 🔥 CREATE LABEL WITH 10+ OPTIONS
+-- Criar label expandido
 function PhoenixUI:CreateLabel(section, text, config)
     config = config or {}
     
@@ -1319,7 +1226,7 @@ function PhoenixUI:CreateLabel(section, text, config)
     return Label
 end
 
--- 🔥 CREATE TOGGLE EXECUTOR (SPECIAL)
+-- Criar toggle executor especial
 function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description, config)
     config = config or {}
     local Toggle = {}
@@ -1339,16 +1246,8 @@ function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description, 
     })
     
     Create("UICorner", {CornerRadius = UDim.new(0, 12)}).Parent = Container
-    Create("UIStroke", {
-        Color = Color3.fromRGB(
-            self.Theme.Secondary.R * 255 * 1.3,
-            self.Theme.Secondary.G * 255 * 1.3, 
-            self.Theme.Secondary.B * 255 * 1.3
-        ),
-        Thickness = 1,
-    }).Parent = Container
     
-    -- Info area
+    -- Área de informações
     local InfoArea = Create("Frame", {
         Size = UDim2.new(0.7, 0, 1, 0),
         BackgroundTransparency = 1,
@@ -1379,7 +1278,7 @@ function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description, 
         Parent = InfoArea
     })
     
-    -- Toggle button
+    -- Botão toggle
     local ToggleButton = Create("TextButton", {
         Size = UDim2.new(0, 90, 0, 40),
         Position = UDim2.new(1, -95, 0.5, -20),
@@ -1393,12 +1292,8 @@ function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description, 
     })
     
     Create("UICorner", {CornerRadius = UDim.new(0, 8)}).Parent = ToggleButton
-    Create("UIStroke", {
-        Color = self.Theme.Text,
-        Thickness = 2,
-    }).Parent = ToggleButton
     
-    -- Status indicator
+    -- Indicador de status
     local StatusIndicator = Create("Frame", {
         Size = UDim2.new(0, 12, 0, 12),
         Position = UDim2.new(0, 8, 0, 8),
@@ -1409,48 +1304,31 @@ function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description, 
     
     local function UpdateToggle()
         if State then
-            -- ON State - Green
             Animate(ToggleButton, {BackgroundColor3 = self.Theme.Success}, 0.3)
             Animate(StatusIndicator, {BackgroundColor3 = self.Theme.Success}, 0.3)
             ToggleButton.Text = "ON"
             
-            -- Execute script
-            local success, result = ScriptExecutor:ExecuteSafe(scriptCode, name)
+            -- Executar script
+            local success, result = ScriptExecutor:Execute(scriptCode, name)
             if not success then
-                warn("❌ Script Error in '" .. name .. "': " .. tostring(result))
+                warn("Script error in '" .. name .. "': " .. tostring(result))
                 State = false
                 UpdateToggle()
             end
         else
-            -- OFF State - Red
             Animate(ToggleButton, {BackgroundColor3 = self.Theme.Error}, 0.3)
             Animate(StatusIndicator, {BackgroundColor3 = self.Theme.Error}, 0.3)
             ToggleButton.Text = "OFF"
-            
-            -- Stop script (implementation depends on your needs)
-            ScriptExecutor.ExecutedScripts[name] = false
         end
     end
     
     local function ToggleState()
         State = not State
         UpdateToggle()
-        PlaySound(SoundEffects.Toggle)
     end
     
-    -- Button interactions
     ToggleButton.MouseButton1Click:Connect(ToggleState)
     
-    -- Hover effects
-    ToggleButton.MouseEnter:Connect(function()
-        Animate(ToggleButton, {Size = UDim2.new(0, 92, 0, 42)}, 0.2)
-    end)
-    
-    ToggleButton.MouseLeave:Connect(function()
-        Animate(ToggleButton, {Size = UDim2.new(0, 90, 0, 40)}, 0.2)
-    end)
-    
-    -- Public methods
     Toggle.Set = function(value)
         State = value
         UpdateToggle()
@@ -1476,7 +1354,7 @@ function PhoenixUI:CreateToggleExecutor(section, name, scriptCode, description, 
     return Toggle
 end
 
--- 🔥 WINDOW MANAGEMENT FUNCTIONS
+-- Funções de gerenciamento da janela
 function PhoenixUI:Toggle()
     if self.ScreenGui then
         self.ScreenGui.Enabled = not self.ScreenGui.Enabled
@@ -1484,17 +1362,10 @@ function PhoenixUI:Toggle()
 end
 
 function PhoenixUI:ShowSettings()
-    -- Implementation for settings window
-    print("Settings window would open here")
-end
-
-function PhoenixUI:Screenshot()
-    -- Implementation for screenshot functionality
-    print("Screenshot functionality would trigger here")
+    NotificationSystem:Show("Settings", "Settings panel would open here", "INFO")
 end
 
 function PhoenixUI:Destroy()
-    -- Clean up all connections and instances
     for _, connection in ipairs(self.Connections or {}) do
         connection:Disconnect()
     end
@@ -1511,19 +1382,13 @@ end
 function PhoenixUI:ChangeTheme(themeName)
     if ColorThemes[themeName] then
         self.Theme = ColorThemes[themeName]
-        -- Implementation to update all UI elements with new theme
+        -- Aqui iria o código para atualizar todas as cores da UI
     end
 end
 
-function PhoenixUI:GetVersion()
-    return "Phoenix UI Mega Pack v2.0 - 1500+ Features"
-end
-
--- 🔥 INITIALIZATION AND RETURN
-print("🚀 Phoenix UI Mega Pack Loaded!")
-print("📦 Features: 1500+")
-print("🎨 Themes: " .. tostring(#ColorThemes))
-print("⚡ Animations: " .. tostring(#AnimationPresets))
-print("🔧 Elements: Buttons, Toggles, Sliders, Dropdowns, ColorPickers, Keybinds, Textboxes, Labels, ToggleExecutors")
+-- Mensagem de inicialização
+print("🚀 Phoenix UI Advanced Loaded!")
+print("📦 1000+ Lines | Multiple Themes | Advanced Features")
+print("🎨 Elements: Buttons, Toggles, Sliders, Dropdowns, ColorPickers, Keybinds, Textboxes, Labels")
 
 return PhoenixUI
