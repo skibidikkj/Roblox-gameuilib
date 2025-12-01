@@ -97,17 +97,7 @@ function PhoenixUI:CreateWindow(title, subtitle)
         Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
     })
     
-    -- Background escurecido
-    self.Overlay = Create("Frame", {
-        Name = "Overlay",
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundColor3 = Color3.new(0, 0, 0),
-        BackgroundTransparency = 0.4,
-        BorderSizePixel = 0,
-        Parent = self.ScreenGui
-    })
-    
-    -- Frame principal com sombra
+    -- Frame principal com sombra (SEM OVERLAY)
     self.MainFrame = Create("Frame", {
         Name = "MainFrame",
         Size = UDim2.new(0, width, 0, height),
@@ -212,7 +202,7 @@ function PhoenixUI:CreateWindow(title, subtitle)
         Parent = TitleContainer
     })
     
-    -- Botões de controle
+    -- Botões de controle (AGORA VERDE E VERMELHO)
     local ControlButtons = Create("Frame", {
         Name = "ControlButtons",
         Size = UDim2.new(0.3, 0, 1, 0),
@@ -221,12 +211,12 @@ function PhoenixUI:CreateWindow(title, subtitle)
         Parent = Header
     })
     
-    -- Botão minimizar
+    -- Botão minimizar (VERDE)
     local MinimizeBtn = Create("TextButton", {
         Name = "Minimize",
         Size = UDim2.new(0, 30, 0, 30),
         Position = UDim2.new(0.5, -35, 0.5, -15),
-        BackgroundColor3 = Colors.Warning,
+        BackgroundColor3 = Colors.Success, -- VERDE
         TextColor3 = Colors.Text,
         Text = "_",
         TextSize = 16,
@@ -236,12 +226,12 @@ function PhoenixUI:CreateWindow(title, subtitle)
     
     Create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = MinimizeBtn})
     
-    -- Botão fechar
+    -- Botão fechar (VERMELHO)
     local CloseBtn = Create("TextButton", {
         Name = "Close",
         Size = UDim2.new(0, 30, 0, 30),
         Position = UDim2.new(1, -35, 0.5, -15),
-        BackgroundColor3 = Colors.Error,
+        BackgroundColor3 = Colors.Error, -- VERMELHO
         TextColor3 = Colors.Text,
         Text = "×",
         TextSize = 20,
@@ -309,7 +299,7 @@ function PhoenixUI:CreateWindow(title, subtitle)
         self:Destroy()
     end)
     
-    -- Efeitos hover nos botões
+    -- Efeitos hover nos botões (COM CORES VERDE E VERMELHO)
     local function SetupButtonEffects(button, normalColor, hoverColor)
         button.MouseEnter:Connect(function()
             Animate(button, {BackgroundColor3 = hoverColor}, 0.2)
@@ -328,8 +318,9 @@ function PhoenixUI:CreateWindow(title, subtitle)
         end)
     end
     
-    SetupButtonEffects(MinimizeBtn, Colors.Warning, Color3.fromRGB(255, 220, 100))
-    SetupButtonEffects(CloseBtn, Colors.Error, Color3.fromRGB(255, 100, 100))
+    -- Cores específicas para os botões verde e vermelho
+    SetupButtonEffects(MinimizeBtn, Colors.Success, Color3.fromRGB(100, 255, 150)) -- Verde mais claro
+    SetupButtonEffects(CloseBtn, Colors.Error, Color3.fromRGB(255, 100, 100)) -- Vermelho mais claro
     
     -- Sistema de arrastar melhorado
     local dragging = false
@@ -768,10 +759,10 @@ function PhoenixUI:CreateToggle(section, name, default, callback)
     
     local function UpdateToggle()
         if State then
-            Animate(ToggleButton, {BackgroundColor3 = Colors.Success}, 0.2)
+            Animate(ToggleButton, {BackgroundColor3 = Colors.Success}, 0.2) -- VERDE quando ativo
             Animate(ToggleDot, {Position = UDim2.new(1, -22, 0.5, -9.5)}, 0.2)
         else
-            Animate(ToggleButton, {BackgroundColor3 = Colors.Secondary}, 0.2)
+            Animate(ToggleButton, {BackgroundColor3 = Colors.Error}, 0.2) -- VERMELHO quando inativo
             Animate(ToggleDot, {Position = UDim2.new(0, 3, 0.5, -9.5)}, 0.2)
         end
     end
